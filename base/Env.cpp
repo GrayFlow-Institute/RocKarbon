@@ -17,3 +17,8 @@ Env &Env::getInstance() {
     static Env env;
     return env;
 }
+
+Env::Env() = default;
+
+Env::~Env() = default;
+
