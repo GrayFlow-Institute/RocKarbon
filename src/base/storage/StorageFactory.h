@@ -6,14 +6,15 @@
 #define ROCKARBON_STORAGEFACTORY_H
 
 #include <string>
-#include "StorageBase.h"
+#include "../interface/StorageBase.h"
 
 
 class StorageFactory {
 public:
     static StorageFactory &getInstance();
 
-    static StorageFactory *createStorage(std::string type);
+    // TODO 添加实现
+    StorageFactory *createStorage(std::string type);
 
 
 private:

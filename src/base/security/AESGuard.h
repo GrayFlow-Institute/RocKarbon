@@ -18,6 +18,8 @@ public:
     AESGuard &operator=(const AESGuard &other);
 
     // APIs
+    // TODO 添加实现
+
     void init(std::string passwd);
 
     bool isInited();
