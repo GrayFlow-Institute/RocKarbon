@@ -8,7 +8,12 @@
 
 class Daemon {
 public:
-    int becomeDaemon(bool isChroot, bool isIORedirection);
+    int becomeDaemon();
+    int debugDaemon();
+
+private:
+    class Impl;
+    Impl* mImpl;
 };
 
 

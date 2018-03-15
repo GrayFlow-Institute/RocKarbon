@@ -7,7 +7,6 @@
 
 class Env::Impl{
 public:
-
 };
 
 static std::mutex m;
