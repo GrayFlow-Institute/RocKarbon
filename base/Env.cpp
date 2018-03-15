@@ -5,7 +5,7 @@
 #include "Env.h"
 #include <mutex>
 
-class Env::Impl{
+class Env::Impl {
 public:
 };
 
@@ -17,7 +17,7 @@ Env &Env::getInstance() {
     return env;
 }
 
-Env::Env() = default;
+Env::Env() : mImpl(new Env::Impl()) {};
 
-Env::~Env() = default;
+Env::~Env() { delete (mImpl); }
 

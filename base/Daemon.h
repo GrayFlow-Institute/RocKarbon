@@ -8,12 +8,23 @@
 
 class Daemon {
 public:
+    Daemon();
+
+    ~Daemon();
+
     int becomeDaemon();
+
     int debugDaemon();
 
 private:
     class Impl;
-    Impl* mImpl;
+
+    Impl *mImpl;
+
+    // 禁止复制
+    Daemon(const Daemon &);
+
+    const Daemon &operator=(const Daemon &);
 };
 
 

@@ -10,6 +10,10 @@ class HashGuard {
 public:
     static HashGuard &getInstance();
 
+    static const std::string getMD5(const std::string &data);
+
+    static const std::string getSHA256(const std::string &data);
+
 private:
     HashGuard();
 

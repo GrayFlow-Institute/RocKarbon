@@ -9,12 +9,32 @@
 
 class RSAGuard {
 public:
+
+    RSAGuard();
+
+    ~RSAGuard();
+
+    RSAGuard(const RSAGuard &other);
+
+    RSAGuard &operator=(const RSAGuard &other);
+
+
+
+    //APIs
+
+    int makeKeys();
+
+    bool isInited();
+
     void init(std::string prvKey, std::string pubKey);
 
     int encode(std::string otherPubKey, std::string data);
 
     int decode(std::string data);
 
+    const std::string getPrivateKey();
+
+    const std::string getPublicKey();
 
 private:
     class Impl; // 为了封装实现 :)

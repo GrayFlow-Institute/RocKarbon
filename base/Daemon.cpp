@@ -9,7 +9,7 @@
  * true = 1
  * false= 0
  * */
-class Impl {
+class Daemon::Impl {
 public:
     int becomeDaemon(bool isChroot, bool isIORedirection) {
         int croot = 0;
@@ -25,6 +25,13 @@ public:
 
 };
 
+Daemon::Daemon() : mImpl(new Daemon::Impl()) {
+
+}
+
+Daemon::~Daemon() {
+    delete mImpl;
+}
 
 int Daemon::becomeDaemon() {
     mImpl->becomeDaemon(true, true);
@@ -34,5 +41,6 @@ int Daemon::debugDaemon() {
     mImpl->becomeDaemon(true, false);
 
 }
+
 
 
