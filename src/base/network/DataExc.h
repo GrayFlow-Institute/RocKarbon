@@ -1,9 +1,10 @@
 //
-// Created by yanyuhl on 18-3-15.
+// Created by yanyuhl on 18-3-16.
 //
 
-#ifndef ROCKARBON_DISCSERVICE_H
-#define ROCKARBON_DISCSERVICE_H
+#ifndef ROCKARBON_DATAEXC_H
+#define ROCKARBON_DATAEXC_H
+
 
 #include <string>
 
@@ -11,11 +12,11 @@
 #include "../system/Env.h"
 #include "../interface/ServiceBase.h"
 
-class DiscService : public ServiceBase {
+class DataExc : public ServiceBase {
 public:
-    DiscService();
+    DataExc();
 
-    ~DiscService();
+    ~DataExc();
 
     // APIs
     // TODO
@@ -35,4 +36,4 @@ private:
 };
 
 
-#endif //ROCKARBON_DISCSERVICE_H
+#endif //ROCKARBON_DATAEXC_H

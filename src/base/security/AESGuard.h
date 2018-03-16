@@ -20,9 +20,9 @@ public:
     // APIs
     // TODO 添加实现
 
-    void init(std::string passwd);
-
     bool isInited();
+
+    void init(std::string passwd);
 
     int encode(std::string data);
 

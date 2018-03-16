@@ -10,7 +10,7 @@
 class StorageBase {
     StorageBase() = default;
 
-    ~StorageBase() = default;
+    virtual ~StorageBase() = default;
 
     virtual void init(std::string data)=0;
 

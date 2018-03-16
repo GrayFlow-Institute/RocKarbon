@@ -23,4 +23,4 @@ add_executable(
         src/base/storage/StorageFactory.h
         src/base/network/DiscService.cpp
         src/base/network/DiscService.h
-)
+        src/base/network/DataExc.cpp src/base/network/DataExc.h src/base/network/ServerStatus.h src/base/interface/ServiceBase.h)
