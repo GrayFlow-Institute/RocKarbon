@@ -5,7 +5,6 @@
 #ifndef ROCKARBON_DATAEXC_H
 #define ROCKARBON_DATAEXC_H
 
-
 #include <string>
 
 #include "ServerStatus.h"
@@ -16,7 +15,7 @@ class DataExc : public ServiceBase {
 public:
     DataExc();
 
-    ~DataExc();
+    ~DataExc() override ;
 
     // APIs
     // TODO

@@ -12,7 +12,9 @@ class StorageBase {
 
     virtual ~StorageBase() = default;
 
-    virtual void init(std::string data)=0;
+    // APIs
+
+    virtual bool init(std::string data)=0;
 
     virtual std::string get(long long key)=0;
 

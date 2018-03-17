@@ -15,7 +15,7 @@ class DiscService : public ServiceBase {
 public:
     DiscService();
 
-    ~DiscService();
+    ~DiscService() override;
 
     // APIs
     // TODO

@@ -11,13 +11,11 @@
 
 class ServiceBase {
 public:
-
-    // 服务器地址唯一，所以禁止复制
-
     ServiceBase() = default;
 
     virtual ~ServiceBase() = default;
 
+    // 服务器地址唯一，所以禁止复制
     ServiceBase(const ServiceBase &) = delete;
 
     const ServiceBase &operator=(const ServiceBase &)= delete;
@@ -32,5 +30,6 @@ public:
 
     virtual bool run()=0;
 };
+
 
 #endif //ROCKARBON_SERVICEBASE_H
