@@ -13,7 +13,6 @@ class LoggerFactory {
 public:
     static LoggerFactory &getInstance();
 
-    // TODO 添加实现
     LoggerBase *createStorage(LoggerType type, std::string info);
 
 private:
