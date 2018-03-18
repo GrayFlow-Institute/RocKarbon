@@ -8,19 +8,31 @@
 #include <mutex>
 #include <iostream>
 
+constexpr int BUFF_SIZE = 2048;
+
 using namespace std;
 
 class DebugLogger::Impl {
 public:
     string info;
 
-    string getFormatTime();
-
     void printLog(const string &, const string &);
+
+private:
+
+    string getFormatTime();
 };
 
 string DebugLogger::Impl::getFormatTime() {
+    time_t rawTime;
+    struct tm *timeInfo;
+    char buffer[BUFF_SIZE];
 
+    time(&rawTime);
+    timeInfo = localtime(&rawTime);
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeInfo);
+
+    return string(buffer);
 }
 
 void DebugLogger::Impl::printLog(const string &type, const string &log) {
@@ -44,18 +56,21 @@ void DebugLogger::init(std::string info) {
     mImpl->info = info;
 }
 
-void DebugLogger::info(const std::string& outs) {
+void DebugLogger::info(const std::string &outs) {
+    mImpl->printLog("Info", outs);
+}
+
+void DebugLogger::debug(const std::string &outs) {
+    mImpl->printLog("Debug", outs);
 
 }
 
-void DebugLogger::debug(const std::string& outs) {
+void DebugLogger::warning(const std::string &outs) {
+    mImpl->printLog("Warning", outs);
 
 }
 
-void DebugLogger::warning(const std::string& outs) {
-
-}
-
-void DebugLogger::error(const std::string& outs) {
+void DebugLogger::error(const std::string &outs) {
+    mImpl->printLog("Error", outs);
 
 }
