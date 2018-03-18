@@ -8,6 +8,7 @@
 #include <string>
 
 class StorageBase {
+public:
     StorageBase() = default;
 
     virtual ~StorageBase() = default;

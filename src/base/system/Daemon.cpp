@@ -5,12 +5,14 @@
 #include "Daemon.h"
 #include <unistd.h>
 
-/*
- * true = 1
- * false= 0
- * */
+
 class Daemon::Impl {
 public:
+
+    /*
+     * true = 1
+     * false= 0
+     * */
     int becomeDaemon(bool isChroot, bool isIORedirection) {
         int croot = 0;
         int ior = 0;
