@@ -5,9 +5,9 @@
 #ifndef ROCKARBON_DEBUGLOGGER_H
 #define ROCKARBON_DEBUGLOGGER_H
 
-#include "../interface/Logger.h"
+#include "../interface/LoggerBase.h"
 
-class DebugLogger : public Logger {
+class DebugLogger : public LoggerBase {
 public:
     DebugLogger();
 
@@ -16,13 +16,13 @@ public:
     // APIs
     void init(std::string info) override;
 
-    void info(std::string outs) override;
+    void info(const std::string&outs) override;
 
-    void debug(std::string outs) override;
+    void debug(const std::string& outs) override;
 
-    void warning(std::string outs) override;
+    void warning(const std::string& outs) override;
 
-    void error(std::string outs) override;
+    void error(const std::string& outs) override;
 
 private:
     class Impl;

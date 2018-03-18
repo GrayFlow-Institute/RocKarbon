@@ -7,14 +7,14 @@
 
 #include <string>
 #include "../interface/StorageBase.h"
-
+#include "StorageType.h"
 
 class StorageFactory {
 public:
     static StorageFactory &getInstance();
 
     // TODO 添加实现
-    StorageFactory *createStorage(std::string type);
+    StorageBase *createStorage(StorageType type);
 
 
 private:

@@ -3,13 +3,36 @@
 //
 
 #include "DebugLogger.h"
+
+#include <ctime>
 #include <mutex>
-#include <string>
+#include <iostream>
+
+using namespace std;
 
 class DebugLogger::Impl {
 public:
-    std::string info;
+    string info;
+
+    string getFormatTime();
+
+    void printLog(const string &, const string &);
 };
+
+string DebugLogger::Impl::getFormatTime() {
+
+}
+
+void DebugLogger::Impl::printLog(const string &type, const string &log) {
+    string outs = "[" + getFormatTime() + "] ";
+
+    outs += "[" + type + "] ";
+    outs += "[" + info + "] ";
+    outs += log;
+
+    cout << outs << endl;
+}
+
 
 DebugLogger::DebugLogger() : mImpl(new DebugLogger::Impl()) {}
 
@@ -21,18 +44,18 @@ void DebugLogger::init(std::string info) {
     mImpl->info = info;
 }
 
-void DebugLogger::info(std::string outs) {
+void DebugLogger::info(const std::string& outs) {
 
 }
 
-void DebugLogger::debug(std::string outs) {
+void DebugLogger::debug(const std::string& outs) {
 
 }
 
-void DebugLogger::warning(std::string outs) {
+void DebugLogger::warning(const std::string& outs) {
 
 }
 
-void DebugLogger::error(std::string outs) {
+void DebugLogger::error(const std::string& outs) {
 
 }
