@@ -32,4 +32,9 @@ add_executable(
         src/base/interface/LoggerBase.h
         src/base/log/DebugLogger.cpp
         src/base/log/DebugLogger.h
-        src/base/log/LoggerFactory.cpp src/base/log/LoggerFactory.h src/base/log/LoggerType.h src/base/storage/StorageType.h src/base/log/ReleaseLogger.h)
+        src/base/log/LoggerFactory.cpp
+        src/base/log/LoggerFactory.h
+        src/base/log/LoggerType.h
+        src/base/storage/StorageType.h
+        src/base/log/ReleaseLogger.h
+)
