@@ -20,13 +20,11 @@ HashGuard &HashGuard::getInstance() {
 const std::string HashGuard::getMD5(const std::string &data) {
 
 
-
-
-    return std::__cxx11::string();
+    return "";
 }
 
 const std::string HashGuard::getSHA256(const std::string &data) {
-    return std::__cxx11::string();
+    return "";
 }
 
 HashGuard::HashGuard() = default;
