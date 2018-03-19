@@ -2,10 +2,14 @@ language:
    - cpp
 
 before_script:
-    - mkdir _builds
-    - cd _builds
+    - cd test
+    - mkdir lib && cd lib
+    - git clone https://github.com/google/googletest.git && mv googletest gtest
+    - cd ../..
+    - mkdir ci_test
+    - cd ci_test
     - cmake ..
-    - cmake --build . --config Release
+    - make
 
 script:
-    - ctest -VV
+    - ./test/Rockarbon_Test
