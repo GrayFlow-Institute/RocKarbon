@@ -1,0 +1,11 @@
+language:
+   - cpp
+
+before_script:
+    - mkdir _builds
+    - cd _builds
+    - cmake ..
+    - cmake --build . --config Release
+
+script:
+    - ctest -VV
