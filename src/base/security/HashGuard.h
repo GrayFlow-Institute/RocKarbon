@@ -5,6 +5,7 @@
 #ifndef ROCKARBON_HASHGUARD_H
 #define ROCKARBON_HASHGUARD_H
 
+#include <string>
 
 class HashGuard {
 public:
