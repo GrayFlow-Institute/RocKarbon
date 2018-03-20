@@ -10,7 +10,7 @@ using namespace std;
 TEST(System, Env) {
     Env &env = Env::getInstance();
     EXPECT_EQ(env.getData(StringEnv::INSTANCE_ONLY_CODE), "");
-    EXPECT_EQ(env.getData(NumberEnv::PORT), 0);
+    EXPECT_EQ(env.getData(NumberEnv::PORT), -1);
 
     EXPECT_EQ(env.putData(NumberEnv::PORT, 1234), true);
     EXPECT_EQ(env.putData(NumberEnv::PORT, 1234), false);

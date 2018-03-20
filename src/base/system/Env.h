@@ -27,7 +27,7 @@ public:
     static Env &getInstance();
     // TODO 添加实现
 
-    const std::string &getData(StringEnv type);
+    std::string getData(StringEnv type);
 
     int getData(NumberEnv type);
 

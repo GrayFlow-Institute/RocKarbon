@@ -54,7 +54,7 @@ bool Env::putData(NumberEnv type, int data) {
 }
 
 
-const string &Env::getData(StringEnv type) {
+string Env::getData(StringEnv type) {
 
     auto tmp = (mImpl->stringDatas).find((char) type);
 
