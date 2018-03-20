@@ -9,6 +9,8 @@ include_directories(
         ./lib/gtest/googletest/include
         ./lib/gtest/googlemock/include
         /usr/local/include
+        /usr/local/include/cryptopp
+        /usr/include/cryptopp
 )
 
 link_libraries(
