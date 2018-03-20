@@ -32,6 +32,9 @@ target_link_libraries(
         pthread
         boost_system
 
+        # Cryptopp
+        cryptopp
+
         # My Modules
         LibLogger
         LibNetwork

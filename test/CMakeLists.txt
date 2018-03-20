@@ -38,6 +38,9 @@ target_link_libraries(
         gtest
         gtest_main
 
+        # Cryptopp
+        cryptopp
+
         # Test Modules
         LibLogger
         LibNetwork
