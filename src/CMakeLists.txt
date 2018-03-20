@@ -19,7 +19,7 @@ add_subdirectory(base/storage)
 add_subdirectory(base/system)
 
 # LibTools
-#add_subdirectory(./src/base/tools)
+add_subdirectory(base/tools)
 
 # Rockarbon
 aux_source_directory(. DIR_SRCS)
@@ -38,5 +38,5 @@ target_link_libraries(
         LibSecurity
         LibStorage
         LibSystem
-        #LibTools
+        LibTools
 )
