@@ -8,7 +8,7 @@
 #include <string>
 
 enum class EnvData : char {
-
+    InstanceOnlyCode
 
 };
 
@@ -17,7 +17,7 @@ public:
     static Env &getInstance();
     // TODO 添加实现
 
-    std::string getInstanceOnlyCode(EnvData type);
+    std::string getData(EnvData type);
 
 
 private:
