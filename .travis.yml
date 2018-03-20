@@ -10,9 +10,9 @@ before_script:
   - mkdir cryptopp && cd cryptopp
   - wget https://cryptopp.com/cryptopp610.zip
   - unzip cryptopp610.zip
-  - make -j8
+  - make all -j8
   - sudo make install
-  - sudo cp /usr/local/lib/libcryptopp.a /usr/lib
+  - sudo cp /usr/local/lib/libcryptopp.so /usr/lib
   - cd ../../..
   - mkdir ci_test
   - cd ci_test
