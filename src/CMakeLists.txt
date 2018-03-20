@@ -30,6 +30,14 @@ add_subdirectory(base/tools)
 aux_source_directory(. DIR_SRCS)
 add_executable(Rockarbon_Run ${DIR_SRCS})
 
+#option(CI_CMAKE "ON of in Travis-CI Build,OFF of in My Arch Build" OFF)
+#
+#if (CI_CMAKE)
+#    set(CRYPTOPP_LIB "libcryptopp")
+#else()
+#    set(CRYPTOPP_LIB "cryptopp")
+#endif ()
+
 target_link_libraries(
         Rockarbon_Run
 
@@ -39,6 +47,7 @@ target_link_libraries(
 
         # Cryptopp
         cryptopp
+#        ${CRYPTOPP_LIB}
 
         # My Modules
         LibLogger
