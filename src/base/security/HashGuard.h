@@ -11,8 +11,6 @@ class HashGuard {
 public:
     static HashGuard &getInstance();
 
-    // TODO 添加实现
-
     const std::string getMD5(const std::string &data);
 
     const std::string getSHA256(const std::string &data);

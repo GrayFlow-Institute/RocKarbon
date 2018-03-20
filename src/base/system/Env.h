@@ -5,11 +5,20 @@
 #ifndef ROCKARBON_ENV_H
 #define ROCKARBON_ENV_H
 
+#include <string>
+
+enum class EnvData : char {
+
+
+};
 
 class Env {
 public:
     static Env &getInstance();
     // TODO 添加实现
+
+    std::string getInstanceOnlyCode(EnvData type);
+
 
 private:
     Env();
