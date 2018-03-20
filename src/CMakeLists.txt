@@ -8,6 +8,11 @@ include_directories(
         /usr/local/include/cryptopp
 )
 
+link_libraries(
+        "/usr/local/lib"
+        "/usr/lib"
+)
+
 # LibLogger
 add_subdirectory(base/log)
 
@@ -36,6 +41,7 @@ target_link_libraries(
         # Boost::ASIO
         pthread
         boost_system
+        boost_filesystem
 
         # Cryptopp
         cryptopp

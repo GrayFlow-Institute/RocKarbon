@@ -10,10 +10,10 @@
 
 
 enum class StringEnv : char {
-    InstanceOnlyCode = 0,
+    INSTANCE_ONLY_CODE = 0,
     IP,
-    ServerName,
-    ServerInfo,
+    SERVER_NAME,
+    SERVER_INFO,
 };
 
 enum class NumberEnv : char {

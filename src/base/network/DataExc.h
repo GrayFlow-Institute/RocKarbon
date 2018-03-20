@@ -19,7 +19,7 @@ public:
 
     // APIs
 
-    bool init(const Env &env) override;
+    bool init() override;
 
     Status getStatus() override;
 

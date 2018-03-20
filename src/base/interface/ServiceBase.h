@@ -22,7 +22,7 @@ public:
 
     // APIs
 
-    virtual bool init(const Env &env)=0;
+    virtual bool init()=0;
 
     virtual Status getStatus()=0;
 

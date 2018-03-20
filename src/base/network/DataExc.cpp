@@ -16,7 +16,7 @@ DataExc::DataExc() : mImpl(new DataExc::Impl()) {};
 
 DataExc::~DataExc() { delete (mImpl); }
 
-bool DataExc::init(const Env &env) {
+bool DataExc::init() {
     return false;
 }
 

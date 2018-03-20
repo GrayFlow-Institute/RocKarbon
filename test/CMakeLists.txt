@@ -11,6 +11,10 @@ include_directories(
         /usr/local/include
 )
 
+link_libraries(
+        "/usr/local/lib"
+        "/usr/lib"
+)
 
 aux_source_directory(. DIR)
 aux_source_directory(logger LOGGER)
