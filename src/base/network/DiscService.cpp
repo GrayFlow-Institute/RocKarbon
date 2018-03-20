@@ -136,11 +136,14 @@ bool DiscService::run() {
 
         // 服务器返回数据逻辑
         io_service service;
+
+        // 接收缓冲区
+        char buff[BUFF_SIZE];
+
         udp::socket sock(service, udp::endpoint(udp::v4(), pData.port));
-        while (true) {
+        while (canRun) {
             udp::endpoint sender_ep;
-            if (!canRun) break;
-            size_t bytes = sock.receive_from(buffer(returnData), sender_ep);
+            size_t bytes = sock.receive_from(buffer(buff), sender_ep);
             if (bytes != 0) {
                 sock.send_to(buffer(returnData), sender_ep);
             }
@@ -150,4 +153,6 @@ bool DiscService::run() {
 
     return true;
 }
+
+
 
