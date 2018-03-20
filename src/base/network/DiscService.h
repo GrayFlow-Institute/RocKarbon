@@ -24,7 +24,7 @@ public:
 
     Status getStatus() override;
 
-    void down() override;
+    bool down() override;
 
     bool run() override;
 

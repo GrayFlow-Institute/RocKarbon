@@ -15,7 +15,7 @@ class DataExc : public ServiceBase {
 public:
     DataExc();
 
-    ~DataExc() override ;
+    ~DataExc() override;
 
     // APIs
 
@@ -23,7 +23,7 @@ public:
 
     Status getStatus() override;
 
-    void down() override;
+    bool down() override;
 
     bool run() override;
 

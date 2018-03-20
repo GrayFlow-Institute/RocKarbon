@@ -9,7 +9,7 @@
 
 class StringUtils {
 public:
-    StringUtils() { srand(time(NULL)); }
+    StringUtils() { srand(time(nullptr)); }
 
     std::string getRandomString(int len);
 

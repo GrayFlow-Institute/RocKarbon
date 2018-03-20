@@ -2,9 +2,10 @@
 // Created by yanyuhl on 18-3-14.
 //
 
-#include "Env.h"
 #include <mutex>
 #include <unordered_map>
+#include "Env.h"
+#include "../log/LoggerFactory.h"
 
 using namespace std;
 
@@ -73,4 +74,17 @@ int Env::getData(NumberEnv type) {
     } else {
         return tmp->second;
     }
+}
+
+LoggerBase *Env::getLogger(string info) {
+    int type = getData(NumberEnv::LOGGER);
+
+    if ((int) LoggerType::RELEASE == type) {
+        return LoggerFactory::getInstance().createStorage(LoggerType::RELEASE, info);
+    } else if ((int) LoggerType::DEBUG == type) {
+        return LoggerFactory::getInstance().createStorage(LoggerType::DEBUG, info);
+    } else {
+        return nullptr;
+    }
+
 }

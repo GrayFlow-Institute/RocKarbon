@@ -26,7 +26,7 @@ public:
 
     virtual Status getStatus()=0;
 
-    virtual void down()=0;
+    virtual bool down()=0;
 
     virtual bool run()=0;
 };

@@ -24,7 +24,7 @@ Status DataExc::getStatus() {
     return Status::NOTINIT;
 }
 
-void DataExc::down() {
+bool DataExc::down() {
 
 }
 

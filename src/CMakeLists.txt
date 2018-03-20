@@ -33,14 +33,6 @@ add_executable(Rockarbon_Run ${DIR_SRCS})
 target_link_libraries(
         Rockarbon_Run
 
-        # Boost::ASIO
-        pthread
-        boost_system
-        boost_filesystem
-
-        # Cryptopp
-        cryptopp
-
         # My Modules
         LibLogger
         LibNetwork

@@ -4,8 +4,6 @@
 #include "base/system/Env.h"
 
 int main(int argc, char **argv) {
-
     Env &env = Env::getInstance();
-
 
 }
