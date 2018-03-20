@@ -12,7 +12,7 @@ before_script:
   - unzip cryptopp610.zip
   - make
   - sudo make install
-  - sudo mv /usr/local/lib/libcryptopp /usr/local/lib/cryptopp
+  - sudo mv /usr/local/lib/libcryptopp.a /usr/lib
   - cd ../../..
   - mkdir ci_test
   - cd ci_test

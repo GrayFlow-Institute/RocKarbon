@@ -18,7 +18,6 @@ public:
     AESGuard &operator=(const AESGuard &other);
 
     // APIs
-    // TODO 添加实现
 
     bool isInited();
 
