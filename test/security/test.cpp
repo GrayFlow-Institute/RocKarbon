@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include "../../src/base/security/HashGuard.h"
+#include "../../src/base/security/AESGuard.h"
 
 using namespace std;
 
@@ -19,11 +20,28 @@ TEST(Security, MD5) {
 TEST(Security, SHA256) {
     string sha256sum = "e9cee71ab932fde863338d08be4de9dfe39ea049bdafb342ce659ec5450b69ae";
     HashGuard &h = HashGuard::getInstance();
-    EXPECT_EQ(h.getSHA256("abcd1234"), sha256sum);}
-
-
-TEST(BasicTest, EQTest) {
-    EXPECT_EQ(6, 6);
+    EXPECT_EQ(h.getSHA256("abcd1234"), sha256sum);
 }
 
+
+TEST(Security, AES) {
+    string passwd = "abcd1234";
+    string code = "mmmmmaaaaakkkkkilaksfdjlkashgkjasgaksdfasldk;gjasjdaaskl;fjasd;gjqwkabn \nasdflk";
+    string tmp = code;
+
+    AESGuard guard;
+    EXPECT_EQ(guard.isInited(), false);
+    EXPECT_EQ(guard.encode(code), false);
+    EXPECT_EQ(guard.decode(code), false);
+
+    guard.init(passwd);
+    EXPECT_EQ(guard.isInited(), true);
+    EXPECT_EQ(guard.getPassword(), passwd);
+
+    EXPECT_EQ(guard.encode(code), true);
+    EXPECT_NE(code, tmp);
+
+    EXPECT_EQ(guard.decode(code), true);
+    EXPECT_EQ(code, tmp);
+}
 

@@ -22,11 +22,11 @@ public:
 
     bool isInited();
 
-    void init(std::string passwd);
+    bool init(std::string passwd);
 
-    int encode(std::string data);
+    bool encode(std::string &data);
 
-    int decode(std::string data);
+    bool decode(std::string &data);
 
     const std::string getPassword();
 
