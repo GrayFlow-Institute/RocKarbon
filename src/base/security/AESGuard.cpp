@@ -5,10 +5,8 @@
 #include "AESGuard.h"
 
 #include <iostream>
-#include <string>
 #include <cstring>
 #include <aes.h>
-#include <config.h>
 #include <modes.h>
 #include <filters.h>
 
