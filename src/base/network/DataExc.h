@@ -18,7 +18,6 @@ public:
     ~DataExc() override ;
 
     // APIs
-    // TODO
 
     bool init(const Env &env) override;
 

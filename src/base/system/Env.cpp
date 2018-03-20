@@ -4,17 +4,22 @@
 
 #include "Env.h"
 #include <mutex>
+#include <unordered_map>
+#include <memory>
+
+using namespace std;
 
 class Env::Impl {
 public:
-    // TODO 添加实现
+    unordered_map<char, shared_ptr<string *> > stringDatas;
+    unordered_map<char, int> numberDatas;
 
 };
 
-static std::mutex m;
+static mutex m;
 
 Env &Env::getInstance() {
-    std::lock_guard<std::mutex> locker(m);
+    lock_guard<std::mutex> locker(m);
     static Env env;
     return env;
 }
@@ -23,3 +28,29 @@ Env::Env() : mImpl(new Env::Impl()) {};
 
 Env::~Env() { delete (mImpl); }
 
+
+bool Env::putData(StringEnv type, string *data) {
+
+//    auto tmp = (mImpl->stringDatas).find((char) type);
+//
+//    if (tmp == mImpl->stringDatas.end()) {
+//        (mImpl->stringDatas).insert((char) type, data);
+//    } else {
+//        return true;
+//    }
+//
+//    return true;
+}
+
+bool Env::putData(NumberEnv type, int data) {
+
+}
+
+
+string *Env::getData(StringEnv type) {
+
+}
+
+int Env::getData(NumberEnv type) {
+    return 0;
+}
