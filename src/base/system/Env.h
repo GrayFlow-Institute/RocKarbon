@@ -6,6 +6,8 @@
 #define ROCKARBON_ENV_H
 
 #include <string>
+#include <memory>
+
 
 enum class StringEnv : char {
     InstanceOnlyCode = 0,
@@ -25,11 +27,11 @@ public:
     static Env &getInstance();
     // TODO 添加实现
 
-    std::string *getData(StringEnv type);
+    const std::string &getData(StringEnv type);
 
     int getData(NumberEnv type);
 
-    bool putData(StringEnv type, std::string *data);
+    bool putData(StringEnv type, std::string data);
 
     bool putData(NumberEnv type, int data);
 

@@ -8,6 +8,7 @@ add_subdirectory(./lib/gtest)
 include_directories(
         ./lib/gtest/googletest/include
         ./lib/gtest/googlemock/include
+        /usr/local/include
 )
 
 
