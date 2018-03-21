@@ -23,7 +23,7 @@ public:
 
     virtual int match(long long key, const std::string &value)=0;
 
-    virtual void sync()=0;
+    virtual bool sync()=0;
 };
 
 

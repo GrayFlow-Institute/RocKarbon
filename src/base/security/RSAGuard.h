@@ -18,8 +18,6 @@ public:
 
     RSAGuard &operator=(const RSAGuard &other);
 
-
-
     //APIs
     // TODO 添加实现
 
