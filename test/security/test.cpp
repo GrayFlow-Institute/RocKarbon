@@ -30,10 +30,25 @@ TEST(Security, AES) {
     string tmp = code;
 
     AESGuard guard;
+    // 未初始化功能测试
     EXPECT_EQ(guard.isInited(), false);
     EXPECT_EQ(guard.encode(code), false);
     EXPECT_EQ(guard.decode(code), false);
 
+    // 空密码功能测试
+    guard.init("");
+    EXPECT_EQ(guard.isInited(), true);
+    EXPECT_EQ(guard.getPassword(), "");
+
+    EXPECT_EQ(guard.encode(code), true);
+    EXPECT_EQ(code, tmp);
+
+    EXPECT_EQ(guard.decode(code), true);
+    EXPECT_EQ(code, tmp);
+
+
+
+    // 正常功能测试
     guard.init(passwd);
     EXPECT_EQ(guard.isInited(), true);
     EXPECT_EQ(guard.getPassword(), passwd);

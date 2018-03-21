@@ -59,6 +59,9 @@ const string AESGuard::getPassword() {
 bool AESGuard::encode(string &data) {
     if (!isInited())
         return false;
+    if (mImpl->passwd.empty())
+        // 空密码不加密
+        return true;
 
     byte key[AES::DEFAULT_KEYLENGTH], iv[AES::BLOCKSIZE];
     memset(key, 0x00, AES::DEFAULT_KEYLENGTH);
@@ -81,6 +84,9 @@ bool AESGuard::encode(string &data) {
 bool AESGuard::decode(string &data) {
     if (!isInited())
         return false;
+    if (mImpl->passwd.empty())
+        // 空密码不解密
+        return true;
 
     byte key[AES::DEFAULT_KEYLENGTH], iv[AES::BLOCKSIZE];
     memset(key, 0x00, AES::DEFAULT_KEYLENGTH);

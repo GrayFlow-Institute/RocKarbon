@@ -6,7 +6,7 @@
 #define ROCKARBON_STORAGETYPE_H
 
 enum class StorageType : char {
-
+    FILE,
 };
 
 #endif //ROCKARBON_STORAGETYPE_H

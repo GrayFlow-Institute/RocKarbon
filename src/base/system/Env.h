@@ -6,8 +6,12 @@
 #define ROCKARBON_ENV_H
 
 #include <string>
+
 #include "../interface/LoggerBase.h"
 #include "../log/LoggerType.h"
+
+#include "../interface/StorageBase.h"
+#include "../storage/StorageType.h"
 
 
 enum class StringEnv : char {
@@ -19,7 +23,8 @@ enum class StringEnv : char {
 
 enum class NumberEnv : char {
     PORT,
-    LOGGER
+    LOGGER,
+    STORAGE,
 
 
 };
@@ -37,6 +42,8 @@ public:
     bool putData(NumberEnv type, int data);
 
     LoggerBase *getLogger(std::string info);
+
+    StorageBase *getStorage(std::string data);
 
 private:
     Env();

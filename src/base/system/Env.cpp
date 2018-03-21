@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "Env.h"
 #include "../log/LoggerFactory.h"
+#include "../storage/StorageFactory.h"
 
 using namespace std;
 
@@ -87,4 +88,14 @@ LoggerBase *Env::getLogger(string info) {
         return nullptr;
     }
 
+}
+
+StorageBase *Env::getStorage(string data) {
+    int type = getData(NumberEnv::STORAGE);
+
+    if ((int) StorageType::FILE == type) {
+        return StorageFactory::getInstance().createStorage(StorageType::FILE, data);
+    } else {
+        return nullptr;
+    }
 }

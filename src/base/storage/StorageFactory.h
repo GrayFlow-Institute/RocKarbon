@@ -13,8 +13,7 @@ class StorageFactory {
 public:
     static StorageFactory &getInstance();
 
-    // TODO 添加实现
-    StorageBase *createStorage(StorageType type);
+    StorageBase *createStorage(StorageType type, std::string data);
 
 
 private:

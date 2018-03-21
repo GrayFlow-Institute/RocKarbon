@@ -18,7 +18,7 @@ add_subdirectory(field/network)
 add_subdirectory(base/security)
 
 # LibStorage
-add_subdirectory(field/storage)
+add_subdirectory(base/storage)
 
 # LibSystem
 add_subdirectory(base/system)

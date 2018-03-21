@@ -4,30 +4,96 @@
 
 #include "DataExc.h"
 #include "ServerStatus.h"
+#include <string>
+#include <climits>
+
+using namespace std;
 
 class DataExc::Impl {
 public:
-    // TODO 添加实现
+    Status status = Status::NOTINIT;
+    string ip;
+    unsigned short port;
+    string passwd;
+    bool canRun = false;
+    LoggerBase *logger = nullptr;
+
 
 };
-
 
 DataExc::DataExc() : mImpl(new DataExc::Impl()) {};
 
 DataExc::~DataExc() { delete (mImpl); }
 
 bool DataExc::init() {
-    return false;
+    // 如果服务器状态不是 NOTINIT 则退出
+    if (getStatus() != Status::NOTINIT) {
+        return false;
+    }
+
+    Env &env = Env::getInstance();
+
+    string ip;
+    int port;
+    string passwd;
+
+
+    // 校验环境变量值
+    if ((ip = env.getData(StringEnv::IP)).empty()) {
+        return false;
+    }
+
+    if ((port = env.getData(NumberEnv::PORT)) == -1 || port < 0 || port > USHRT_MAX) {
+        return false;
+    }
+
+    if ((passwd = env.getData(StringEnv::SERVER_NAME)).empty()) {
+        return false;
+    }
+
+    // 初始化私有数据
+    mImpl->logger = env.getLogger("DataExc");
+    mImpl->ip = ip;
+    mImpl->port = static_cast<unsigned short>(port);
+    mImpl->passwd = passwd;
+
+
+    mImpl->status = Status::STOP;
+
+    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Init");
+    return true;
+
+
 }
 
 Status DataExc::getStatus() {
-    return Status::NOTINIT;
+    return mImpl->status;
 }
 
 bool DataExc::down() {
+    // 如果服务器状态不是 RUNNING 则打印 Log 并退出
+    if (getStatus() != Status::RUNNING) {
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not RUNNING");
+        return false;
+    }
+    mImpl->status = Status::STOP;
+    mImpl->canRun = false;
 
+    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Will Stop");
+    return true;
 }
 
 bool DataExc::run() {
-    return false;
+    // 如果服务器状态不是 STOP 则打印 Log 并退出
+    if (getStatus() != Status::STOP) {
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not STOP");
+        return false;
+    }
+    mImpl->status = Status::RUNNING;
+    mImpl->canRun = true;
+
+
+    // TODO 服务器逻辑
+
+    return true;
 }
