@@ -140,23 +140,30 @@ bool DiscService::run() {
     returnData += mImpl->info;
 
     if (mImpl->logger != nullptr)mImpl->logger->debug("Service Start");
-    udp::socket sock(service, udp::endpoint(udp::v4(), mImpl->port));
-    while (mImpl->canRun) {
-        udp::endpoint sender_ep;
-        memset(buff, 0, BUFF_SIZE);
 
-        size_t bytes = sock.receive_from(buffer(buff), sender_ep);
-        string sender_info = sender_ep.address().to_string() + ":" + to_string(sender_ep.port());
-        if (mImpl->logger != nullptr)
-            mImpl->logger->debug(
-                    sender_info +
-                    "\n\nData is:\n" +
-                    buff + "\n");
+    try {
+        udp::socket sock(service, udp::endpoint(udp::v4(), mImpl->port));
+        while (mImpl->canRun) {
+            udp::endpoint sender_ep;
+            memset(buff, 0, BUFF_SIZE);
 
-        if (bytes != 0) {
-            if (mImpl->logger != nullptr)mImpl->logger->debug("Send Data");
-            sock.send_to(buffer(returnData), sender_ep);
+            size_t bytes = sock.receive_from(buffer(buff), sender_ep);
+            string sender_info = sender_ep.address().to_string() + ":" + to_string(sender_ep.port());
+            if (mImpl->logger != nullptr)
+                mImpl->logger->debug(
+                        sender_info +
+                        "\n\nData is:\n" +
+                        buff + "\n");
+
+            if (bytes != 0) {
+                if (mImpl->logger != nullptr)mImpl->logger->debug("Send Data");
+                sock.send_to(buffer(returnData), sender_ep);
+            }
         }
+    } catch (exception &e) {
+        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+        down();
+        return false;
     }
     return true;
 }

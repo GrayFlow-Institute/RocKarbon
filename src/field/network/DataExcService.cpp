@@ -47,10 +47,6 @@ bool DataExcService::init() {
         return false;
     }
 
-    if ((password = env.getData(StringEnv::PASSWORD)).empty()) {
-        return false;
-    }
-
     // 初始化私有数据
     mImpl->logger.reset(env.getLogger("DataExcService"));
     mImpl->port = static_cast<unsigned short>(port);
@@ -95,13 +91,12 @@ bool DataExcService::run() {
         while (mImpl->canRun) {
             shared_ptr<ip::tcp::socket> socket(new ip::tcp::socket(service));
             acceptor.accept(*socket);
-
-
             // TODO 校验步骤
 
 
-            // TODO 校验完之后
 
+
+            // TODO 校验完之后
             shared_ptr<DataExcClient> client(new DataExcClient());
             client->init(socket, mImpl->password);
             mImpl->clients.insert(mImpl->clients.end(), client);
@@ -109,6 +104,8 @@ bool DataExcService::run() {
     }
     catch (exception &e) {
         if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+        down();
+        return false;
     }
 
 

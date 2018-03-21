@@ -42,6 +42,8 @@ public:
 
     bool putData(NumberEnv type, int data);
 
+    void clear();
+
     LoggerBase *getLogger(std::string info);
 
     StorageBase *getStorage(std::string data);

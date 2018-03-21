@@ -20,4 +20,9 @@ TEST(System, Env) {
 
     EXPECT_EQ(env.getData(StringEnv::INSTANCE_ONLY_CODE), "abcd1234");
     EXPECT_EQ(env.getData(NumberEnv::PORT), 1234);
+
+    env.clear();
+
+    EXPECT_EQ(env.getData(StringEnv::INSTANCE_ONLY_CODE), "");
+    EXPECT_EQ(env.getData(NumberEnv::PORT), -1);
 }

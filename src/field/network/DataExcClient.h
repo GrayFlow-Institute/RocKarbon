@@ -5,8 +5,8 @@
 #ifndef ROCKARBON_CLIENT_H
 #define ROCKARBON_CLIENT_H
 
-#include "ClientStatus.h"
-#include "ClientBase.h"
+#include "../../interface/ClientStatus.h"
+#include "../../interface/ClientBase.h"
 #include <string>
 #include <memory>
 

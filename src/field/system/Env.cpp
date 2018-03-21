@@ -99,3 +99,8 @@ StorageBase *Env::getStorage(string data) {
         return nullptr;
     }
 }
+
+void Env::clear(){
+    mImpl->numberDatas.clear();
+    mImpl->stringDatas.clear();
+}

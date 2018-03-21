@@ -5,7 +5,12 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <boost/asio.hpp>
+
+#include "../../src/interface/ServiceBase.h"
+#include "../../src/interface/ClientBase.h"
 #include "../../src/field/network/DiscService.h"
+#include "../../src/field/network/DataExcClient.h"
 #include "../../src/field/network/DataExcService.h"
 #include "../../src/field/system/Env.h"
 
@@ -32,6 +37,7 @@ TEST(Network, DiscService) {
     EXPECT_EQ(ds->getStatus(), Status::STOP);
     EXPECT_EQ(ds->down(), false);
 
+    env.clear();
 }
 
 
@@ -51,4 +57,24 @@ TEST(Network, DataExc) {
     EXPECT_EQ(de->init(), true);
     EXPECT_EQ(de->getStatus(), Status::STOP);
     EXPECT_EQ(de->down(), false);
+
+    env.clear();
+}
+
+TEST(Network, DataExcClient) {
+    Env &env = Env::getInstance();
+    shared_ptr<ClientBase> dec(new DataExcClient());
+    shared_ptr<boost::asio::ip::tcp::socket> socket;
+    string passwd;
+
+    boost::asio::io_service service;
+    EXPECT_EQ(dec->init(socket, passwd), false);
+
+    socket.reset(new boost::asio::ip::tcp::socket(service));
+    EXPECT_EQ(dec->init(socket, passwd), true);
+    EXPECT_EQ(dec->init(socket, passwd), false);
+    EXPECT_EQ(dec->close(), true);
+    EXPECT_EQ(dec->close(), false);
+
+    env.clear();
 }
