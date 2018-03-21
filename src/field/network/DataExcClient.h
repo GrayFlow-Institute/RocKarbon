@@ -8,6 +8,7 @@
 #include "ClientStatus.h"
 #include "ClientBase.h"
 #include <string>
+#include <memory>
 
 class DataExcClient : public ClientBase {
 public:
@@ -16,7 +17,7 @@ public:
     ~DataExcClient() override;
 
     // APIs
-    bool init(boost::asio::ip::tcp::socket &&socket,std::string passwd) override;
+    bool init(std::shared_ptr<boost::asio::ip::tcp::socket> socket, std::string passwd) override;
 
     bool sendData(std::string data) override;
 

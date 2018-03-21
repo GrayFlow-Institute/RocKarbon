@@ -24,7 +24,7 @@ public:
     // APIs
     virtual bool sendData(std::string)=0;
 
-    virtual bool init(boost::asio::ip::tcp::socket &&socket, std::string passwd)=0;
+    virtual bool init(std::shared_ptr<boost::asio::ip::tcp::socket>, std::string passwd)=0;
 
     virtual Status getStatus()=0;
 

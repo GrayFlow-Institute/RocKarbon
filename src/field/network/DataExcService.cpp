@@ -93,17 +93,18 @@ bool DataExcService::run() {
 
         ip::tcp::acceptor acceptor(service, ip::tcp::endpoint(ip::tcp::v4(), mImpl->port));
         while (mImpl->canRun) {
-            ip::tcp::socket socket(service);
-            acceptor.accept(socket);
+            shared_ptr<ip::tcp::socket> socket(new ip::tcp::socket(service));
+            acceptor.accept(*socket);
+
 
             // TODO 校验步骤
 
 
             // TODO 校验完之后
 
-//            shared_ptr<DataExcClient> client(new DataExcClient());
-//            client->init(move(socket));
-//            mImpl->clients.insert(mImpl->clients.end(), client);
+            shared_ptr<DataExcClient> client(new DataExcClient());
+            client->init(socket, mImpl->password);
+            mImpl->clients.insert(mImpl->clients.end(), client);
         }
     }
     catch (exception &e) {

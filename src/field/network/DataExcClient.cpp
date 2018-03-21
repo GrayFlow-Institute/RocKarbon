@@ -14,7 +14,7 @@ using boost::asio::ip::tcp;
 class DataExcClient::Impl {
 public:
     Status status = Status::NOTINIT;
-//    tcp::socket &&socket;
+    shared_ptr<tcp::socket> socket;
     string passwd;
     shared_ptr<LoggerBase> logger;
 
@@ -24,9 +24,9 @@ DataExcClient::DataExcClient() : mImpl(new DataExcClient::Impl()) {}
 
 DataExcClient::~DataExcClient() { delete mImpl; }
 
-bool DataExcClient::init(tcp::socket &&socket, string passwd) {
+bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
     mImpl->passwd = move(passwd);
-//    mImpl->socket = move(socket);
+    mImpl->socket = socket;
     return true;
 }
 
