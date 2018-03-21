@@ -3,7 +3,7 @@ language:
 
 before_script:
   - sudo apt-get update -qq
-  - sudo apt-get install libboost-all-dev libcrypto++-dev libcrypto++-doc libcrypto++-utils libgtest-dev
+  - sudo apt-get install libboost-all-dev libcrypto++-dev libcrypto++-doc libcrypto++-utils libgtest-dev tree
 #  - cd test
 #  - mkdir lib && cd lib
 #  - git clone https://github.com/google/googletest.git && mv googletest gtest
@@ -15,6 +15,10 @@ before_script:
 #  - sudo cp /usr/local/lib/libcryptopp.so /usr/lib
 #  - cd ../../..
 #  - cd ../..
+  - tree /usr/include
+  - tree /usr/lib
+  - tree /usr/local/include
+  - tree /usr/local/lib
   - mkdir ci_test
   - cd ci_test
   - cmake ..
