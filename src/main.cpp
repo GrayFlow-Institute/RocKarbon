@@ -1,13 +1,17 @@
 //
 // Created by yanyuhl on 18-3-14.
 //
+#include <thread>
 #include "base/system/Env.h"
 #include "base/tools/StringUtils.h"
 #include "base/log/LoggerType.h"
 #include "base/network/DiscService.h"
 
+using namespace std;
+
 int main(int argc, char **argv) {
     Env &env = Env::getInstance();
+    LoggerBase* mainlog;
     StringUtils utils;
 
 
@@ -19,8 +23,19 @@ int main(int argc, char **argv) {
     env.putData(NumberEnv::PORT, 23333);
     env.putData(NumberEnv::LOGGER, static_cast<int>(LoggerType::DEBUG));
 
+
+    mainlog=env.getLogger("main");
+
     DiscService ds;
     ds.init();
-    ds.run();
+
+    thread t([&ds] {
+        ds.run();
+    });
+
+    this_thread::sleep_for(std::chrono::milliseconds(1));
     ds.down();
+
+    mainlog->debug("ds is down.now join.");
+    t.join();
 }

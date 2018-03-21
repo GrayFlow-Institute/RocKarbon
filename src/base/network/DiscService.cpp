@@ -16,8 +16,6 @@ using boost::asio::ip::udp;
 using boost::asio::buffer;
 using namespace std;
 
-static bool canRun{false}; // 原子型静态变量控制发现服务器线程执行，因为是单个，所以不用担心竞争
-
 class DiscService::Impl {
 public:
 
@@ -27,8 +25,12 @@ public:
     string name;
     string info;
     string code;
-
+    bool canRun = false;
     LoggerBase *logger = nullptr;
+
+    ~Impl() {
+        delete (logger);
+    }
 };
 
 
@@ -96,7 +98,7 @@ bool DiscService::down() {
         return false;
     }
     mImpl->status = Status::STOP;
-    canRun = false;
+    mImpl->canRun = false;
 
     if (mImpl->logger != nullptr)mImpl->logger->debug("Service Will Stop");
     return true;
@@ -109,7 +111,7 @@ bool DiscService::run() {
         return false;
     }
     mImpl->status = Status::RUNNING;
-    canRun = true;
+    mImpl->canRun = true;
 
     // 一堆提示的 Log
     if (mImpl->logger != nullptr)mImpl->logger->debug("IP is " + mImpl->ip);
@@ -135,13 +137,17 @@ bool DiscService::run() {
 
     if (mImpl->logger != nullptr)mImpl->logger->debug("Service Start");
     udp::socket sock(service, udp::endpoint(udp::v4(), mImpl->port));
-    while (canRun) {
+    while (mImpl->canRun) {
         udp::endpoint sender_ep;
         memset(buff, 0, BUFF_SIZE);
-        size_t bytes = sock.receive_from(buffer(buff), sender_ep);
 
+        size_t bytes = sock.receive_from(buffer(buff), sender_ep);
+        string sender_info = sender_ep.address().to_string() + ":" + to_string(sender_ep.port());
         if (mImpl->logger != nullptr)
-            mImpl->logger->debug(sender_ep.address().to_string() + ":" + to_string(sender_ep.port()) + "\t" + buff);
+            mImpl->logger->debug(
+                    sender_info +
+                    "\n\nData is:\n" +
+                    buff + "\n");
 
         if (bytes != 0) {
             if (mImpl->logger != nullptr)mImpl->logger->debug("Send Data");
