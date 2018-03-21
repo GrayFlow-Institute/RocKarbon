@@ -81,7 +81,7 @@ bool DiscService::init() {
 
     mImpl->status = Status::STOP;
 
-    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Init.");
+    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Init");
     return true;
 }
 
@@ -92,20 +92,20 @@ Status DiscService::getStatus() {
 bool DiscService::down() {
     // 如果服务器状态不是 RUNNING 则打印 Log 并退出
     if (getStatus() != Status::RUNNING) {
-        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not RUNNING.");
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not RUNNING");
         return false;
     }
     mImpl->status = Status::STOP;
     canRun = false;
 
-    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Will Stop.");
+    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Will Stop");
     return true;
 }
 
 bool DiscService::run() {
     // 如果服务器状态不是 STOP 则打印 Log 并退出
     if (getStatus() != Status::STOP) {
-        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not STOP.");
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not STOP");
         return false;
     }
     mImpl->status = Status::RUNNING;
@@ -118,39 +118,36 @@ bool DiscService::run() {
     if (mImpl->logger != nullptr)mImpl->logger->debug("Info is " + mImpl->info);
     if (mImpl->logger != nullptr)mImpl->logger->debug("Code is " + mImpl->code);
 
-    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Start.");
 
-    DiscService::Impl pData = *mImpl;
-    pData.logger = nullptr;
+    // 服务器返回数据逻辑
+    io_service service;
+    // 接收缓冲区
+    char buff[BUFF_SIZE];
 
-    thread t([pData] {
-        // 初始化返回数据
-        string returnData;
-        returnData += "rockarbon/1.0\n";
-        returnData += to_string(time(nullptr));
-        returnData += pData.ip;
-        returnData += to_string(pData.port);
-        returnData += pData.name;
-        returnData += pData.code;
-        returnData += pData.info;
+    string returnData;
+    returnData += "rockarbon/1.0\n";
+    returnData += to_string(time(nullptr)) + "\n";
+    returnData += mImpl->code + "\n";
+    returnData += mImpl->ip + "\n";
+    returnData += to_string(mImpl->port) + "\n";
+    returnData += mImpl->name + "\n";
+    returnData += mImpl->info;
 
-        // 服务器返回数据逻辑
-        io_service service;
+    if (mImpl->logger != nullptr)mImpl->logger->debug("Service Start");
+    udp::socket sock(service, udp::endpoint(udp::v4(), mImpl->port));
+    while (canRun) {
+        udp::endpoint sender_ep;
+        memset(buff, 0, BUFF_SIZE);
+        size_t bytes = sock.receive_from(buffer(buff), sender_ep);
 
-        // 接收缓冲区
-        char buff[BUFF_SIZE];
+        if (mImpl->logger != nullptr)
+            mImpl->logger->debug(sender_ep.address().to_string() + ":" + to_string(sender_ep.port()) + "\t" + buff);
 
-        udp::socket sock(service, udp::endpoint(udp::v4(), pData.port));
-        while (canRun) {
-            udp::endpoint sender_ep;
-            size_t bytes = sock.receive_from(buffer(buff), sender_ep);
-            if (bytes != 0) {
-                sock.send_to(buffer(returnData), sender_ep);
-            }
+        if (bytes != 0) {
+            if (mImpl->logger != nullptr)mImpl->logger->debug("Send Data");
+            sock.send_to(buffer(returnData), sender_ep);
         }
-    });
-    t.detach();
-
+    }
     return true;
 }
 
