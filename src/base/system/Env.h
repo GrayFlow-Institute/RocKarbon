@@ -19,6 +19,7 @@ enum class StringEnv : char {
     IP,
     SERVER_NAME,
     SERVER_INFO,
+    PASSWORD,
 };
 
 enum class NumberEnv : char {

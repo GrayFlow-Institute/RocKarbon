@@ -6,6 +6,7 @@
 #include "ServerStatus.h"
 #include <string>
 #include <climits>
+#include <memory>
 
 using namespace std;
 
@@ -16,8 +17,11 @@ public:
     unsigned short port;
     string passwd;
     bool canRun = false;
-    LoggerBase *logger = nullptr;
+    shared_ptr<LoggerBase> logger;
 
+//    ~Impl() {
+//        delete (logger);
+//    }
 
 };
 
@@ -37,7 +41,6 @@ bool DataExc::init() {
     int port;
     string passwd;
 
-
     // 校验环境变量值
     if ((ip = env.getData(StringEnv::IP)).empty()) {
         return false;
@@ -47,16 +50,15 @@ bool DataExc::init() {
         return false;
     }
 
-    if ((passwd = env.getData(StringEnv::SERVER_NAME)).empty()) {
+    if ((passwd = env.getData(StringEnv::PASSWORD)).empty()) {
         return false;
     }
 
     // 初始化私有数据
-    mImpl->logger = env.getLogger("DataExc");
+    mImpl->logger.reset(env.getLogger("DataExc"));
     mImpl->ip = ip;
     mImpl->port = static_cast<unsigned short>(port);
     mImpl->passwd = passwd;
-
 
     mImpl->status = Status::STOP;
 

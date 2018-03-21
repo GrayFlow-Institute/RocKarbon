@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <thread>
 #include <ctime>
+#include <memory>
 
 #include "DiscService.h"
 #include "ServerStatus.h"
@@ -26,11 +27,12 @@ public:
     string info;
     string code;
     bool canRun = false;
-    LoggerBase *logger = nullptr;
 
-    ~Impl() {
-        delete (logger);
-    }
+//    LoggerBase *logger = nullptr;
+    shared_ptr<LoggerBase> logger;
+//    ~Impl() {
+//        delete logger;
+//    }
 };
 
 
@@ -74,7 +76,9 @@ bool DiscService::init() {
     }
 
     // 初始化私有数据
-    mImpl->logger = env.getLogger("DiscService");
+    mImpl->logger.reset(env.getLogger("DiscService"));
+//    mImpl->logger = env.getLogger("DiscService");
+
     mImpl->ip = ip;
     mImpl->port = static_cast<unsigned short>(port);
     mImpl->name = name;
