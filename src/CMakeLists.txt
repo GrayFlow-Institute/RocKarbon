@@ -12,13 +12,13 @@ include_directories(
 add_subdirectory(base/log)
 
 # LibNetwork
-add_subdirectory(base/network)
+add_subdirectory(field/network)
 
 # LibSecurity
 add_subdirectory(base/security)
 
 # LibStorage
-add_subdirectory(base/storage)
+add_subdirectory(field/storage)
 
 # LibSystem
 add_subdirectory(base/system)

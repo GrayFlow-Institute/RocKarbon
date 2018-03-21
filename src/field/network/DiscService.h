@@ -1,23 +1,24 @@
 //
-// Created by yanyuhl on 18-3-16.
+// Created by yanyuhl on 18-3-15.
 //
 
-#ifndef ROCKARBON_DATAEXC_H
-#define ROCKARBON_DATAEXC_H
+#ifndef ROCKARBON_DISCSERVICE_H
+#define ROCKARBON_DISCSERVICE_H
 
 #include <string>
 
 #include "ServerStatus.h"
-#include "../system/Env.h"
 #include "../interface/ServiceBase.h"
+#include "../../base/system/Env.h"
 
-class DataExc : public ServiceBase {
+class DiscService : public ServiceBase {
 public:
-    DataExc();
+    DiscService();
 
-    ~DataExc() override;
+    ~DiscService() override;
 
     // APIs
+    // TODO
 
     bool init() override;
 
@@ -34,4 +35,4 @@ private:
 };
 
 
-#endif //ROCKARBON_DATAEXC_H
+#endif //ROCKARBON_DISCSERVICE_H
