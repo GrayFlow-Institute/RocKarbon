@@ -7,11 +7,11 @@
 
 #include <string>
 
-#include "../interface/LoggerBase.h"
-#include "../log/LoggerType.h"
+#include "../../base/interface/LoggerBase.h"
+#include "../../base/log/LoggerType.h"
 
-#include "../interface/StorageBase.h"
-#include "../storage/StorageType.h"
+#include "../../base/interface/StorageBase.h"
+#include "../../base/storage/StorageType.h"
 
 
 enum class StringEnv : char {

@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "DiscService.h"
-#include "ServerStatus.h"
+#include "ServiceStatus.h"
 
 constexpr int BUFF_SIZE = 1024;
 

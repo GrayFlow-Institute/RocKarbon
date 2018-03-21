@@ -5,8 +5,8 @@
 #include <mutex>
 #include <unordered_map>
 #include "Env.h"
-#include "../log/LoggerFactory.h"
-#include "../storage/StorageFactory.h"
+#include "../../base/log/LoggerFactory.h"
+#include "../../base/storage/StorageFactory.h"
 
 using namespace std;
 

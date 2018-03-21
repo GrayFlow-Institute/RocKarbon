@@ -4,6 +4,7 @@ aux_source_directory(. DIR)
 add_library(LibNetwork ${DIR})
 include_directories(
         /usr/include
+        ../interfase
 )
 
 target_link_libraries(

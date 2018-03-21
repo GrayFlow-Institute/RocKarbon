@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include "ServerStatus.h"
+#include "ServiceStatus.h"
 #include "../interface/ServiceBase.h"
-#include "../../base/system/Env.h"
+#include "../../field/system/Env.h"
 
 class DiscService : public ServiceBase {
 public:

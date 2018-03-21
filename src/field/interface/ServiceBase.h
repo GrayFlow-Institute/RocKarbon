@@ -6,8 +6,7 @@
 #define ROCKARBON_SERVICEBASE_H
 
 
-#include "../../base/system/Env.h"
-#include "../network/ServerStatus.h"
+#include "../network/ServiceStatus.h"
 
 class ServiceBase {
 public:

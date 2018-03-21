@@ -3,7 +3,7 @@
 //
 
 #include "DataExc.h"
-#include "ServerStatus.h"
+#include "ServiceStatus.h"
 #include <string>
 #include <climits>
 #include <memory>
@@ -64,8 +64,6 @@ bool DataExc::init() {
 
     if (mImpl->logger != nullptr)mImpl->logger->debug("Service Init");
     return true;
-
-
 }
 
 Status DataExc::getStatus() {
