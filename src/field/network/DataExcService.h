@@ -7,15 +7,15 @@
 
 #include <string>
 
-#include "ServiceStatus.h"
+#include "../../interface/ServiceBase.h"
+#include "../../interface/ServerStatus.h"
 #include "../../field/system/Env.h"
-#include "../interface/ServiceBase.h"
 
-class DataExc : public ServiceBase {
+class DataExcService : public ServiceBase {
 public:
-    DataExc();
+    DataExcService();
 
-    ~DataExc() override;
+    ~DataExcService() override;
 
     // APIs
 

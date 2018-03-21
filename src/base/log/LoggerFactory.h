@@ -6,8 +6,8 @@
 #define ROCKARBON_LOGGERFACTORY_H
 
 #include <string>
-#include "LoggerType.h"
-#include "../interface/LoggerBase.h"
+#include "../../interface/LoggerType.h"
+#include "../../interface/LoggerBase.h"
 
 class LoggerFactory {
 public:

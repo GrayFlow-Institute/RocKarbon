@@ -6,7 +6,7 @@
 #define ROCKARBON_ClientBase_H
 
 
-#include "../network/ServiceStatus.h"
+#include "ClientStatus.h"
 #include <boost/asio.hpp>
 #include <string>
 
@@ -24,13 +24,13 @@ public:
     // APIs
     virtual bool sendData(std::string)=0;
 
-    virtual bool init(boost::asio::ip::tcp::socket socket)=0;
+    virtual bool init(boost::asio::ip::tcp::socket &&socket, std::string passwd)=0;
 
     virtual Status getStatus()=0;
 
-    virtual bool down()=0;
+    virtual bool close()=0;
 
-    virtual bool run()=0;
+    virtual bool check()=0;
 };
 
 

@@ -6,7 +6,7 @@
 #define ROCKARBON_FILESTORAGE_H
 
 #include <string>
-#include "../interface/StorageBase.h"
+#include "../../interface/StorageBase.h"
 
 class FileStorage : public StorageBase {
 

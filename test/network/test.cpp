@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "../../src/field/network/DiscService.h"
-#include "../../src/field/network/DataExc.h"
+#include "../../src/field/network/DataExcService.h"
 #include "../../src/field/system/Env.h"
 
 using namespace std;
@@ -37,11 +37,10 @@ TEST(Network, DiscService) {
 
 TEST(Network, DataExc) {
     Env &env = Env::getInstance();
-    shared_ptr<ServiceBase> de(new DataExc());
+    shared_ptr<ServiceBase> de(new DataExcService());
 
     EXPECT_EQ(de->init(), false);
 
-    env.putData(StringEnv::IP, "127.0.0.1");
     env.putData(StringEnv::PASSWORD, "123456");
 
     env.putData(NumberEnv::PORT, 23333);

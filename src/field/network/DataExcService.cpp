@@ -2,34 +2,35 @@
 // Created by yanyuhl on 18-3-16.
 //
 
-#include "DataExc.h"
-#include "ServiceStatus.h"
+#include "DataExcService.h"
+#include "ServerStatus.h"
+#include "DataExcClient.h"
 #include <string>
 #include <climits>
 #include <memory>
+#include <vector>
+#include <boost/asio.hpp>
 
 using namespace std;
+using namespace boost::asio;
+using namespace boost::system;
 
-class DataExc::Impl {
+
+class DataExcService::Impl {
 public:
     Status status = Status::NOTINIT;
-    string ip;
     unsigned short port;
-    string passwd;
+    string password;
     bool canRun = false;
     shared_ptr<LoggerBase> logger;
-
-//    ~Impl() {
-//        delete (logger);
-//    }
-
+    vector<shared_ptr<DataExcClient>> clients;
 };
 
-DataExc::DataExc() : mImpl(new DataExc::Impl()) {};
+DataExcService::DataExcService() : mImpl(new DataExcService::Impl()) {};
 
-DataExc::~DataExc() { delete (mImpl); }
+DataExcService::~DataExcService() { delete (mImpl); }
 
-bool DataExc::init() {
+bool DataExcService::init() {
     // 如果服务器状态不是 NOTINIT 则退出
     if (getStatus() != Status::NOTINIT) {
         return false;
@@ -37,28 +38,23 @@ bool DataExc::init() {
 
     Env &env = Env::getInstance();
 
-    string ip;
     int port;
-    string passwd;
+    string password;
 
     // 校验环境变量值
-    if ((ip = env.getData(StringEnv::IP)).empty()) {
-        return false;
-    }
 
     if ((port = env.getData(NumberEnv::PORT)) == -1 || port < 0 || port > USHRT_MAX) {
         return false;
     }
 
-    if ((passwd = env.getData(StringEnv::PASSWORD)).empty()) {
+    if ((password = env.getData(StringEnv::PASSWORD)).empty()) {
         return false;
     }
 
     // 初始化私有数据
-    mImpl->logger.reset(env.getLogger("DataExc"));
-    mImpl->ip = ip;
+    mImpl->logger.reset(env.getLogger("DataExcService"));
     mImpl->port = static_cast<unsigned short>(port);
-    mImpl->passwd = passwd;
+    mImpl->password = password;
 
     mImpl->status = Status::STOP;
 
@@ -66,11 +62,11 @@ bool DataExc::init() {
     return true;
 }
 
-Status DataExc::getStatus() {
+Status DataExcService::getStatus() {
     return mImpl->status;
 }
 
-bool DataExc::down() {
+bool DataExcService::down() {
     // 如果服务器状态不是 RUNNING 则打印 Log 并退出
     if (getStatus() != Status::RUNNING) {
         if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not RUNNING");
@@ -83,7 +79,7 @@ bool DataExc::down() {
     return true;
 }
 
-bool DataExc::run() {
+bool DataExcService::run() {
     // 如果服务器状态不是 STOP 则打印 Log 并退出
     if (getStatus() != Status::STOP) {
         if (mImpl->logger != nullptr)mImpl->logger->warning("Service Not STOP");
@@ -92,8 +88,29 @@ bool DataExc::run() {
     mImpl->status = Status::RUNNING;
     mImpl->canRun = true;
 
+    try {
+        io_service service;
 
-    // TODO 服务器逻辑
+        ip::tcp::acceptor acceptor(service, ip::tcp::endpoint(ip::tcp::v4(), mImpl->port));
+        while (mImpl->canRun) {
+            ip::tcp::socket socket(service);
+            acceptor.accept(socket);
+
+            // TODO 校验步骤
+
+
+            // TODO 校验完之后
+
+//            shared_ptr<DataExcClient> client(new DataExcClient());
+//            client->init(move(socket));
+//            mImpl->clients.insert(mImpl->clients.end(), client);
+        }
+    }
+    catch (exception &e) {
+        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+    }
+
 
     return true;
 }
+

@@ -5,7 +5,7 @@
 #ifndef ROCKARBON_DEBUGLOGGER_H
 #define ROCKARBON_DEBUGLOGGER_H
 
-#include "../interface/LoggerBase.h"
+#include "../../interface/LoggerBase.h"
 
 class DebugLogger : public LoggerBase {
 public:

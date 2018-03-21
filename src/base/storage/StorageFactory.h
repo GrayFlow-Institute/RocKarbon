@@ -6,8 +6,8 @@
 #define ROCKARBON_STORAGEFACTORY_H
 
 #include <string>
-#include "../interface/StorageBase.h"
-#include "StorageType.h"
+#include "../../interface/StorageBase.h"
+#include "../../interface/StorageType.h"
 
 class StorageFactory {
 public:

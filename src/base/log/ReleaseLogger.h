@@ -5,7 +5,7 @@
 #ifndef ROCKARBON_RELEASELOGGER_H
 #define ROCKARBON_RELEASELOGGER_H
 
-#include "../interface/LoggerBase.h"
+#include "../../interface/LoggerBase.h"
 
 class ReleaseLogger : public LoggerBase {
 public:
