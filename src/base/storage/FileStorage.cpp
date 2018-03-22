@@ -5,7 +5,7 @@
 #include "FileStorage.h"
 #include <unordered_map>
 #include <vector>
-//#include <list>
+#include <list>
 #include <string>
 #include <mutex>
 #include <fstream>
@@ -18,7 +18,7 @@ using namespace std;
 class FileStorage::Impl {
 public:
     unordered_map<long long, string> historyData;
-    vector<long long> aid;
+    list<long long> aid;
     string path;
 };
 

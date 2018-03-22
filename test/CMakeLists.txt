@@ -11,12 +11,12 @@ include_directories(
 
 
 aux_source_directory(. DIR)
+aux_source_directory(tools TOOLS)
 aux_source_directory(logger LOGGER)
 aux_source_directory(security SECURTIY)
 aux_source_directory(storage STORAGE)
 aux_source_directory(network NETWORK)
 aux_source_directory(system SYSTEM)
-aux_source_directory(tools TOOLS)
 
 add_executable(
         Rockarbon_Test
