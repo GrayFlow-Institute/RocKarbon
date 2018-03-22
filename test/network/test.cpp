@@ -65,6 +65,11 @@ TEST(Network, DataExcClient) {
     Env &env = Env::getInstance();
     shared_ptr<ClientBase> dec(new DataExcClient());
     shared_ptr<boost::asio::ip::tcp::socket> socket;
+
+    env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
+    env.putData(StringEnv::STORAGE_PATH, "./test.dat");
+//    env.putData(NumberEnv::LOGGER, (int) LoggerType::DEBUG);
+
     string passwd;
 
     boost::asio::io_service service;
@@ -73,7 +78,6 @@ TEST(Network, DataExcClient) {
     socket.reset(new boost::asio::ip::tcp::socket(service));
     EXPECT_EQ(dec->init(socket, passwd), true);
     EXPECT_EQ(dec->init(socket, passwd), false);
-    EXPECT_EQ(dec->close(), true);
     EXPECT_EQ(dec->close(), false);
 
     env.clear();

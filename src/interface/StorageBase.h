@@ -21,7 +21,7 @@ public:
 
     // APIs
 
-    virtual bool init()=0;
+    virtual bool init(std::string)=0;
 
     virtual std::string get(long long key)=0;
 

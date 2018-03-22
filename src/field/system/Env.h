@@ -20,6 +20,7 @@ enum class StringEnv : char {
     SERVER_NAME,
     SERVER_INFO,
     PASSWORD,
+    STORAGE_PATH,
 };
 
 enum class NumberEnv : char {

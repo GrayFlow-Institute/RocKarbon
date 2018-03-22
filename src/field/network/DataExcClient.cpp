@@ -17,9 +17,9 @@ using boost::asio::ip::tcp;
 class DataExcClient::Impl {
 public:
     Status status = Status::NOTINIT;
+    StorageBase *storage; // 单例不能使用 shared_ptr
     shared_ptr<AESGuard> aes;
     shared_ptr<LoggerBase> logger;
-    shared_ptr<StorageBase> storage;
     shared_ptr<tcp::socket> socket;
 };
 
@@ -40,8 +40,7 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
 
     Env &env = Env::getInstance();
     mImpl->logger.reset(env.getLogger("DataExcClient"));
-    mImpl->storage.reset(env.getStorage());
-
+    mImpl->storage = env.getStorage();
     if (mImpl->storage == nullptr) {
         if (mImpl->logger != nullptr)mImpl->logger->error("Storage Init Error");
         return false;

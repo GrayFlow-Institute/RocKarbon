@@ -14,7 +14,7 @@ public:
     static FileStorage &getInstance();
 
     // APIs
-    bool init() override;
+    bool init(std::string path) override;
 
     std::string get(long long key) override;
 

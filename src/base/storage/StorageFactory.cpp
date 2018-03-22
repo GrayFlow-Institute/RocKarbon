@@ -17,11 +17,11 @@ StorageFactory &StorageFactory::getInstance() {
     return factory;
 }
 
-StorageBase *StorageFactory::createStorage(StorageType type) {
+StorageBase *StorageFactory::createStorage(StorageType type, string path) {
     StorageBase *storage = nullptr;
     if (type == StorageType::FILE) {
         storage = &FileStorage::getInstance();
-        storage->init();
+        storage->init(path);
     }
     return storage;
 }

@@ -92,15 +92,16 @@ LoggerBase *Env::getLogger(string info) {
 
 StorageBase *Env::getStorage() {
     int type = getData(NumberEnv::STORAGE);
-
     if ((int) StorageType::FILE == type) {
-        return StorageFactory::getInstance().createStorage(StorageType::FILE);
+        string path = getData(StringEnv::STORAGE_PATH);
+        if (path.empty())return nullptr;
+        return StorageFactory::getInstance().createStorage(StorageType::FILE, path);
     } else {
         return nullptr;
     }
 }
 
-void Env::clear(){
+void Env::clear() {
     mImpl->numberDatas.clear();
     mImpl->stringDatas.clear();
 }

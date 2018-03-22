@@ -29,7 +29,7 @@ FileStorage::FileStorage() : mImpl(new FileStorage::Impl()) {}
 
 FileStorage::~FileStorage() { delete (mImpl); }
 
-bool FileStorage::init() {
+bool FileStorage::init(std::string path) {
     return false;
 }
 
