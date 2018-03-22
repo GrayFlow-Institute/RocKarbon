@@ -6,6 +6,7 @@ add_library(LibNetwork ${DIR})
 include_directories(
         /usr/include
         ../../interface
+        ../../base/security
 )
 
 target_link_libraries(

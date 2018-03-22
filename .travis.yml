@@ -11,7 +11,7 @@ before_script:
   - mkdir ci_test
   - cd ci_test
   - cmake ..
-  - make
+  - make -j8
 
 script:
   - ./test/Rockarbon_Test
