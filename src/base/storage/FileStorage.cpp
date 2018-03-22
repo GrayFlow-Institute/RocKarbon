@@ -5,19 +5,20 @@
 #include "FileStorage.h"
 #include <unordered_map>
 #include <vector>
-#include <list>
+//#include <list>
 #include <string>
 #include <mutex>
-#include <cstring>
 #include <fstream>
-#include <unistd.h>
+#include <sstream>
+#include <cstring>
+
 
 using namespace std;
 
 class FileStorage::Impl {
 public:
     unordered_map<long long, string> historyData;
-    list<long long> aid;
+    vector<long long> aid;
     string path;
 };
 
@@ -35,19 +36,13 @@ FileStorage::FileStorage() : mImpl(new FileStorage::Impl()) {}
 FileStorage::~FileStorage() { delete (mImpl); }
 
 bool FileStorage::init(string path) {
-    if (access(path.c_str(), F_OK | W_OK | R_OK) != 0) {
-        return false;
-    }
-    string buff;
-    try {
-        fstream f;
-        f.open(path);
-        f >> buff;
-        f.close();
-    } catch (exception &e) {
-        return false;
-    }
-    if (deal(buff) != "more") {
+    fstream f;
+    f.open(path, ios::in);
+    stringstream sbuffer;
+    sbuffer << f.rdbuf();
+    f.close();
+    string buff(sbuffer.str());
+    if (deal(buff) == "error") {
         return false;
     }
     mImpl->path = path;
@@ -55,6 +50,8 @@ bool FileStorage::init(string path) {
 }
 
 string FileStorage::get(long long key) {
+    if (mImpl->path.empty()) { return ""; }
+
     auto tmp = (mImpl->historyData).find(key);
     if (tmp == mImpl->historyData.end()) {
         return "";
@@ -70,16 +67,23 @@ string FileStorage::get(long long key) {
  * 2 stringData
  * 1 stringData
  *
+ * 如果出现错误，则返回 "error"
  * 如果都不存在——即客户端发送的数据不足，则返回 "more"
  * 如果部分存在——即客户端发送的数据足够，则返回本地多出的数据(客户端未同步的数据)
  * 如果恰好同步——即客户端和服务端此时数据相同，则返回 "" 空文本
- * 如果出现错误，则返回 "error"
  *
  * */
 
 string FileStorage::deal(string data) {
-    lock_guard<mutex> locker(m);
+    if (data.empty()) {
+        string buff;
+        for (auto key:mImpl->aid) {
+            buff = to_string(key) + " " + mImpl->historyData[key] + "\n" + buff;
+        }
+        return buff;
+    }
 
+    lock_guard<mutex> locker(m);
     vector<long long> keys;
     vector<string> values;
 
@@ -93,10 +97,14 @@ string FileStorage::deal(string data) {
             } else if (strchr(" ", c) != nullptr) {
                 keys.push_back(stoll(buff));
                 buff.clear();
-                do {
-                    c = data.c_str()[++i];
-                    buff += c;
-                } while (c != '\n' && c != '\0');
+                while (true) {
+                    c = data.c_str()[i++];
+                    if (c != '\n' && c != '\0') {
+                        buff += c;
+                    } else {
+                        break;
+                    }
+                }
                 values.push_back(buff);
                 buff.clear();
             }
@@ -111,36 +119,41 @@ string FileStorage::deal(string data) {
     }
 
     string buff;
-    long long lastKey = 0;
+    long long lastSameKey = -1;
+    bool dealStatu = true;
+    bool preDealStatu = true;
 
-    for (int i = keys.size() - 1; i < 0; --i) {
+    for (int i = keys.size() - 1; i >= 0; --i) {
         auto key = keys[i];
         auto value = values[i];
 
-        bool dealStatu = deal(key, value);
-        if (!dealStatu) { lastKey = key; }
-        if (dealStatu && buff.empty()) {
+        preDealStatu = dealStatu;
+        dealStatu = deal(key, value);
+        if ((!preDealStatu && dealStatu && lastSameKey == -1) || // 服务器部分领先
+            (!preDealStatu && !dealStatu && i == 0)) { // 服务器完美领先
+            if (i != keys.size() - 1) {
+                lastSameKey = keys[i + 1];
+            }
+            // 如果数据足够，并且有多，则返回服务器多出来的数据
             for (auto it = mImpl->aid.begin(); it != mImpl->aid.end(); ++it) {
-                long long aidKey = *it;
-                if (aidKey > lastKey) {
+                if (*it > lastSameKey) {
                     for (; it != mImpl->aid.end(); ++it) {
-                        buff += to_string(*it) + " " + mImpl->historyData[*it] + "\n";
+                        if (*it == key)continue;
+                        buff = to_string(*it) + " " + mImpl->historyData[*it] + "\n" + buff;
                     }
                     break;
                 }
             }
         }
-    }
 
-    // 一直插入成功，即数据不够，所以请求新的数据
+    }
+    // 一直插入成功，即数据不够，所以请求新的数据——客户端完美领先
     if (buff.empty()) {
         return "more";
     }
 
-    // 如果数据足够，并且有多，则返回服务器多出来的数据
     return buff;
 }
-
 
 /* *
  *
@@ -170,10 +183,12 @@ bool FileStorage::deal(long long key, string value) {
 }
 
 bool FileStorage::match(long long key) {
+    if (mImpl->path.empty()) { return false; }
     return !(mImpl->historyData.end() == (mImpl->historyData).find(key));
 }
 
 bool FileStorage::sync() {
+    if (mImpl->path.empty()) { return false; }
     string buff;
     try {
         for (auto key:mImpl->aid) {
@@ -181,7 +196,7 @@ bool FileStorage::sync() {
         }
 
         fstream f;
-        f.open(mImpl->path, ios::trunc);
+        f.open(mImpl->path, ios::trunc | ios::out);
         f << buff;
         f.close();
     } catch (exception &e) {
