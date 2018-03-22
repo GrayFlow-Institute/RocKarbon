@@ -14,4 +14,9 @@ target_link_libraries(
         # 依赖于 log 和 stroage ，因为有工厂嘛
         LibLogger
         LibStorage
+
+        # Boost::ASIO
+        pthread
+        boost_system
+        boost_filesystem
 )
