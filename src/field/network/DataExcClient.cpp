@@ -5,14 +5,23 @@
 #include "DataExcClient.h"
 #include "../../interface/LoggerBase.h"
 #include "../../interface/StorageBase.h"
+#include "../../interface/rockarbon_protocol.h"
 #include "../../base/security/AESGuard.h"
 #include "../system/Env.h"
+#include <arpa/inet.h>
 #include <boost/asio.hpp>
 #include <utility>
 
 using namespace std;
 using boost::asio::buffer;
 using boost::asio::ip::tcp;
+using rockarbon::protocol::PROT_HEARBEAT_REQ;
+using rockarbon::protocol::PROT_HEARBEAT_RES;
+using rockarbon::protocol::PROT_SYNC_FIRST;
+using rockarbon::protocol::PROT_SYNC_MORE;
+using rockarbon::protocol::PROT_SYNC_DONE;
+
+constexpr int BUFF_SIZE = 2048;
 
 class DataExcClient::Impl {
 public:
@@ -56,7 +65,39 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
 
     // TODO 同步
 
+    string reData;
 
+    // 发送第一次请求
+    if (!sendData(PROT_SYNC_FIRST, reData)) {
+        close();
+        return false;
+    };
+    do {
+        // 循环同步客户端，直到结束
+        reData = mImpl->storage->deal(reData);
+        if (!sendData(PROT_SYNC_MORE, reData)) {
+            close();
+            return false;
+        }
+    } while (reData == "more");
+
+    // 出现错误，直接关闭，并等待回收
+    if (reData == "error") {
+        close();
+        return false;
+    }
+
+    // 返回服务器多出的数据
+    if (!sendData(reData, reData)) {
+        close();
+        return false;
+    }
+    if (!sendData(PROT_SYNC_DONE, reData)) {
+        close();
+        return false;
+    }
+
+    // 同步结束
     mImpl->status = Status::SYNCED;
     return true;
 }
@@ -67,6 +108,15 @@ bool DataExcClient::sendData(std::string data, string &reData) {
         if (mImpl->logger != nullptr)mImpl->logger->warning("Client's Can't Send");
         return false;
     }
+    if (data.size() > (BUFF_SIZE - sizeof(uint32_t))) {
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Data Too Long");
+        return false;
+    }
+
+    char buff[BUFF_SIZE] = {0};
+    uint32_t size = static_cast<int>(data.size());
+    memcpy(buff, (char *) htonl(size), sizeof(size));
+    strcpy(buff + sizeof(size), data.c_str());
 
     try {
         boost::system::error_code ignored_error;
@@ -112,13 +162,12 @@ bool DataExcClient::check() {
         return false;
     }
 
-    string data = "rockarbon/1.0\nH\n";
     string redata;
-    if (!sendData(data, redata)) {
+    if (!sendData(PROT_HEARBEAT_REQ, redata)) {
         close();
         return false;
     } else {
-        if (redata != "rockarbon/1.0\nR\n") {
+        if (redata != PROT_HEARBEAT_RES) {
             close();
             return false;
         } else {

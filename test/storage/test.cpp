@@ -16,11 +16,6 @@ TEST(Storage, FileStorage) {
     string ERROR_PATH2 = "/";
     string WRITE_DATA = "4 abcd4\n3 abcd3\n2 abcd2\n1 abcd1";
 
-    fstream f;
-    f.open(TEST_PATH, ios::trunc | ios::out);
-    f.write(WRITE_DATA.c_str(), WRITE_DATA.size());
-    f.close();
-
     Env &env = Env::getInstance();
     StorageBase *storage;
 
@@ -45,7 +40,32 @@ TEST(Storage, FileStorage) {
     EXPECT_EQ(env.getStorage(), nullptr);
     env.clear();
 
+    // 空服务器
+    {
+        fstream f;
+        f.open(TEST_PATH, ios::trunc | ios::out);
+        f.write("", string("").size());
+        f.close();
+
+        env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
+        EXPECT_EQ(env.getStorage(), nullptr);
+        env.putData(StringEnv::STORAGE_PATH, TEST_PATH);
+
+        storage = env.getStorage();
+        EXPECT_EQ(storage->deal("2 d\n1 r\n"), "more");
+        EXPECT_EQ(storage->deal("4 d\n3 r\n"), "more");
+        EXPECT_EQ(storage->deal("6 d\n5 r\n"), "more");
+
+        env.clear();
+    }
+
+
     // 正确获取
+    fstream f;
+    f.open(TEST_PATH, ios::trunc | ios::out);
+    f.write(WRITE_DATA.c_str(), WRITE_DATA.size());
+    f.close();
+
     env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
     EXPECT_EQ(env.getStorage(), nullptr);
     env.putData(StringEnv::STORAGE_PATH, TEST_PATH);
