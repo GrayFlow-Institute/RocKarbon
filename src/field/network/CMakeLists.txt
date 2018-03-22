@@ -9,6 +9,7 @@ include_directories(
 
 target_link_libraries(
         LibNetwork
+        LibSecurity
 
         # Boost::ASIO
         pthread
