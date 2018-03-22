@@ -113,11 +113,19 @@ bool DataExcClient::check() {
         return false;
     }
 
-
-
-
-    //TODO
-    return false;
+    string data = "rockarbon/1.0\nH\n";
+    string redata;
+    if (!sendData(data, redata)) {
+        close();
+        return false;
+    } else {
+        if (redata != "rockarbon/1.0\nR\n") {
+            close();
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 
 
