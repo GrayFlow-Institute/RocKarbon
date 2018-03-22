@@ -8,7 +8,8 @@
 enum class Status : char {
     NOTINIT,
     CLOSED,
-    RUNNING
+    SYNCED,
+    SYNCING
 };
 
 #endif //ROCKARBON_SERVICESTATUS_H

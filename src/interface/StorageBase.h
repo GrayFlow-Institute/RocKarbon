@@ -9,13 +9,19 @@
 
 class StorageBase {
 public:
+
     StorageBase() = default;
 
     virtual ~StorageBase() = default;
 
+    // 对于一种存储的某个路径等，应该只有一个实例(避免了文件加锁的繁琐)，所以禁止复制
+    StorageBase(const StorageBase &) = delete;
+
+    const StorageBase &operator=(const StorageBase &)= delete;
+
     // APIs
 
-    virtual bool init(std::string data)=0;
+    virtual bool init()=0;
 
     virtual std::string get(long long key)=0;
 

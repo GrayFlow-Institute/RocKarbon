@@ -46,7 +46,7 @@ public:
 
     LoggerBase *getLogger(std::string info);
 
-    StorageBase *getStorage(std::string data);
+    StorageBase *getStorage();
 
 private:
     Env();

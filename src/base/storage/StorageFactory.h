@@ -13,7 +13,7 @@ class StorageFactory {
 public:
     static StorageFactory &getInstance();
 
-    StorageBase *createStorage(StorageType type, std::string data);
+    StorageBase *createStorage(StorageType type);
 
 
 private:

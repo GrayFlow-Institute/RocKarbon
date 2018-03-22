@@ -11,12 +11,10 @@
 class FileStorage : public StorageBase {
 
 public:
-    FileStorage();
-
-    ~FileStorage() override;
+    static FileStorage &getInstance();
 
     // APIs
-    bool init(std::string data) override;
+    bool init() override;
 
     std::string get(long long key) override;
 
@@ -26,9 +24,11 @@ public:
 
     bool sync() override;
 
-    // TODO 如何处理拷贝构造函数和赋值重载
-
 private:
+    FileStorage();
+
+    ~FileStorage() override;
+
     class Impl; // 为了封装实现 :)
     Impl *mImpl;
 };

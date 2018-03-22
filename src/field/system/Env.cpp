@@ -90,11 +90,11 @@ LoggerBase *Env::getLogger(string info) {
 
 }
 
-StorageBase *Env::getStorage(string data) {
+StorageBase *Env::getStorage() {
     int type = getData(NumberEnv::STORAGE);
 
     if ((int) StorageType::FILE == type) {
-        return StorageFactory::getInstance().createStorage(StorageType::FILE, data);
+        return StorageFactory::getInstance().createStorage(StorageType::FILE);
     } else {
         return nullptr;
     }

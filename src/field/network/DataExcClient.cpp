@@ -4,6 +4,8 @@
 
 #include "DataExcClient.h"
 #include "../../interface/LoggerBase.h"
+#include "../../interface/StorageBase.h"
+#include "../../base/security/AESGuard.h"
 #include "../system/Env.h"
 #include <boost/asio.hpp>
 #include <utility>
@@ -15,10 +17,10 @@ using boost::asio::ip::tcp;
 class DataExcClient::Impl {
 public:
     Status status = Status::NOTINIT;
-    shared_ptr<tcp::socket> socket;
-    string passwd;
+    shared_ptr<AESGuard> aes;
     shared_ptr<LoggerBase> logger;
-
+    shared_ptr<StorageBase> storage;
+    shared_ptr<tcp::socket> socket;
 };
 
 DataExcClient::DataExcClient() : mImpl(new DataExcClient::Impl()) {}
@@ -37,20 +39,33 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
     }
 
     Env &env = Env::getInstance();
-
-    mImpl->passwd = move(passwd);
-    mImpl->socket = socket;
     mImpl->logger.reset(env.getLogger("DataExcClient"));
+    mImpl->storage.reset(env.getStorage());
 
+    if (mImpl->storage == nullptr) {
+        if (mImpl->logger != nullptr)mImpl->logger->error("Storage Init Error");
+        return false;
+    }
+
+    mImpl->aes.reset(new AESGuard());
+    mImpl->aes->init(passwd);
+
+    mImpl->socket = socket;
     if (mImpl->logger != nullptr)mImpl->logger->debug("Client Init");
-    mImpl->status = Status::RUNNING;
+
+    mImpl->status = Status::SYNCING;
+
+    // TODO 同步
+
+
+    mImpl->status = Status::SYNCED;
     return true;
 }
 
-bool DataExcClient::sendData(std::string data) {
-    // 如果客户端状态不是 RUNNING 则打印 Log 并退出
-    if (getStatus() != Status::RUNNING) {
-        if (mImpl->logger != nullptr)mImpl->logger->warning("Client Not RUNNING");
+bool DataExcClient::sendData(std::string data, string &reData) {
+    // 如果客户端状态不是 SYNCED 或者 SYNCING ，则打印 Log 并退出
+    if (getStatus() != Status::SYNCED || getStatus() == Status::SYNCING) {
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Client's Can't Send");
         return false;
     }
 
@@ -59,6 +74,12 @@ bool DataExcClient::sendData(std::string data) {
         boost::asio::write(
                 *mImpl->socket,
                 buffer(data),
+                boost::asio::transfer_all(),
+                ignored_error
+        );
+        boost::asio::read(
+                *mImpl->socket,
+                buffer(reData),
                 boost::asio::transfer_all(),
                 ignored_error
         );
@@ -76,9 +97,9 @@ Status DataExcClient::getStatus() {
 }
 
 bool DataExcClient::close() {
-    // 如果客户端状态不是 RUNNING 则打印 Log 并退出
-    if (getStatus() != Status::RUNNING) {
-        if (mImpl->logger != nullptr)mImpl->logger->warning("Client Not RUNNING");
+    // 如果客户端状态不是 SYNCED 则打印 Log 并退出
+    if (getStatus() != Status::SYNCED || getStatus() != Status::SYNCING) {
+        if (mImpl->logger != nullptr)mImpl->logger->warning("Client Not SYNCED");
         return false;
     }
     mImpl->status = Status::CLOSED;
@@ -87,6 +108,14 @@ bool DataExcClient::close() {
 }
 
 bool DataExcClient::check() {
+    if (getStatus() != Status::SYNCED) {
+        if (mImpl->logger != nullptr)mImpl->logger->debug("Status Not SYNCED");
+        return false;
+    }
+
+
+
+
     //TODO
     return false;
 }

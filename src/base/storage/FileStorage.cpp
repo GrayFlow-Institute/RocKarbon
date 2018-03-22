@@ -3,12 +3,25 @@
 //
 
 #include "FileStorage.h"
+#include <unordered_map>
+#include <string>
+#include <mutex>
+
+using namespace std;
 
 class FileStorage::Impl {
 public:
-    // TODO 实现
-
+    unordered_map<long long, string> historyData;
 };
+
+static mutex m;
+
+FileStorage &FileStorage::getInstance() {
+    lock_guard<std::mutex> locker(m);
+    static FileStorage storage;
+    return storage;
+}
+
 
 // TOOD 实现
 
@@ -16,7 +29,7 @@ FileStorage::FileStorage() : mImpl(new FileStorage::Impl()) {}
 
 FileStorage::~FileStorage() { delete (mImpl); }
 
-bool FileStorage::init(std::string data) {
+bool FileStorage::init() {
     return false;
 }
 
@@ -35,3 +48,4 @@ int FileStorage::match(long long key, const std::string &value) {
 bool FileStorage::sync() {
 
 }
+
