@@ -36,8 +36,16 @@ FileStorage::FileStorage() : mImpl(new FileStorage::Impl()) {}
 FileStorage::~FileStorage() { delete (mImpl); }
 
 bool FileStorage::init(string path) {
+    // 三清操作
+    mImpl->aid.clear();
+    mImpl->historyData.clear();
+    mImpl->path.clear();
+
     fstream f;
-    f.open(path, ios::in);
+    f.open(path, ios::in|ios::out);
+    if (!f) {
+        return false;
+    }
     stringstream sbuffer;
     sbuffer << f.rdbuf();
     f.close();

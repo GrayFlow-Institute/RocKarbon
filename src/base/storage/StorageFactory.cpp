@@ -21,7 +21,7 @@ StorageBase *StorageFactory::createStorage(StorageType type, string path) {
     StorageBase *storage = nullptr;
     if (type == StorageType::FILE) {
         storage = &FileStorage::getInstance();
-        storage->init(path);
+        if (!storage->init(path))return nullptr;
     }
     return storage;
 }

@@ -12,23 +12,40 @@ using namespace std;
 
 TEST(Storage, FileStorage) {
     string TEST_PATH = "./test.dat";
+    string ERROR_PATH1 = "/test.dat";
+    string ERROR_PATH2 = "/";
     string WRITE_DATA = "4 abcd4\n3 abcd3\n2 abcd2\n1 abcd1";
-
-    Env &env = Env::getInstance();
-    StorageBase *storage;
 
     fstream f;
     f.open(TEST_PATH, ios::trunc | ios::out);
     f.write(WRITE_DATA.c_str(), WRITE_DATA.size());
     f.close();
 
+    Env &env = Env::getInstance();
+    StorageBase *storage;
+
+    // 空环境
     EXPECT_EQ(env.getStorage(), nullptr);
 
+
+    // 无类型
     env.putData(StringEnv::STORAGE_PATH, TEST_PATH);
     EXPECT_EQ(env.getStorage(), nullptr);
-
     env.clear();
 
+    // 无权限路径
+    env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
+    env.putData(StringEnv::STORAGE_PATH, ERROR_PATH1);
+    EXPECT_EQ(env.getStorage(), nullptr);
+    env.clear();
+
+    // 错误路径
+    env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
+    env.putData(StringEnv::STORAGE_PATH, ERROR_PATH2);
+    EXPECT_EQ(env.getStorage(), nullptr);
+    env.clear();
+
+    // 正确获取
     env.putData(NumberEnv::STORAGE, (int) StorageType::FILE);
     EXPECT_EQ(env.getStorage(), nullptr);
     env.putData(StringEnv::STORAGE_PATH, TEST_PATH);
