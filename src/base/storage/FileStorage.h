@@ -18,9 +18,11 @@ public:
 
     std::string get(long long key) override;
 
-    std::string deal(long long key, std::string value) override;
+    bool deal(long long key, std::string value) override;
 
-    int match(long long key, const std::string &value) override;
+    std::string deal(std::string data) override;
+
+    bool match(long long key) override;
 
     bool sync() override;
 

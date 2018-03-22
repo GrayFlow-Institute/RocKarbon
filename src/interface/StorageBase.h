@@ -25,9 +25,11 @@ public:
 
     virtual std::string get(long long key)=0;
 
-    virtual std::string deal(long long key, std::string value)=0;
+    virtual bool deal(long long key, std::string value)=0;
 
-    virtual int match(long long key, const std::string &value)=0;
+    virtual std::string deal(std::string data)=0;
+
+    virtual bool match(long long key)=0;
 
     virtual bool sync()=0;
 };
