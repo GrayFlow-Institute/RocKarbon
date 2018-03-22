@@ -9,6 +9,8 @@
 #include <string>
 #include <mutex>
 #include <cstring>
+#include <fstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -33,10 +35,21 @@ FileStorage::FileStorage() : mImpl(new FileStorage::Impl()) {}
 FileStorage::~FileStorage() { delete (mImpl); }
 
 bool FileStorage::init(string path) {
-
-
-
-
+    if (access(path.c_str(), F_OK | W_OK | R_OK) != 0) {
+        return false;
+    }
+    string buff;
+    try {
+        fstream f;
+        f.open(path);
+        f >> buff;
+        f.close();
+    } catch (exception &e) {
+        return false;
+    }
+    if (deal(buff) != "more") {
+        return false;
+    }
     mImpl->path = path;
     return true;
 }
@@ -161,6 +174,21 @@ bool FileStorage::match(long long key) {
 }
 
 bool FileStorage::sync() {
-// TODO
+    string buff;
+    try {
+        for (auto key:mImpl->aid) {
+            buff = to_string(key) + " " + mImpl->historyData[key] + "\n" + buff;
+        }
+
+        fstream f;
+        f.open(mImpl->path, ios::trunc);
+        f << buff;
+        f.close();
+    } catch (exception &e) {
+        return false;
+    }
+    return true;
+
+
 }
 
