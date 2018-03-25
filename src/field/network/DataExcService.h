@@ -6,6 +6,8 @@
 #define ROCKARBON_DATAEXC_H
 
 #include <string>
+#include <memory>
+
 
 #include "../../interface/ServiceBase.h"
 #include "../../interface/ServerStatus.h"
@@ -29,8 +31,7 @@ public:
 
 private:
     class Impl; // 为了封装实现 :)
-
-    Impl *mImpl;
+    std::shared_ptr<Impl> mImpl;
 };
 
 

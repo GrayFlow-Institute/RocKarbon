@@ -7,7 +7,7 @@
 #include "DataExcClient.h"
 #include <string>
 #include <climits>
-#include <memory>
+#include <thread>
 #include <vector>
 #include <boost/asio.hpp>
 
@@ -23,12 +23,12 @@ public:
     string password;
     bool canRun = false;
     shared_ptr<LoggerBase> logger;
-    vector<shared_ptr<DataExcClient>> clients;
+//    vector<shared_ptr<DataExcClient>> clients;
 };
 
 DataExcService::DataExcService() : mImpl(new DataExcService::Impl()) {};
 
-DataExcService::~DataExcService() { delete (mImpl); }
+DataExcService::~DataExcService() {}
 
 bool DataExcService::init() {
     // 如果服务器状态不是 NOTINIT 则退出
@@ -95,8 +95,13 @@ bool DataExcService::run() {
             // 校验步骤在客户端实现
 
             shared_ptr<DataExcClient> client(new DataExcClient());
-            client->init(socket, mImpl->password);
-            mImpl->clients.insert(mImpl->clients.end(), client);
+
+            thread t([this, socket, client] {
+                bool status = client->init(socket, mImpl->password);
+                if (mImpl->logger != nullptr)mImpl->logger->debug(status ? "Sync Finished" : "Sync Error");
+            });
+            t.detach();
+//            mImpl->clients.insert(mImpl->clients.end(), client);
         }
     }
     catch (exception &e) {
