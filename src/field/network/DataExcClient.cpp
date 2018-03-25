@@ -7,6 +7,7 @@
 #include "../../interface/StorageBase.h"
 #include "../../interface/rockarbon_protocol.h"
 #include "../../base/security/AESGuard.h"
+#include "../../base/tools/StringUtils.h"
 #include "../system/Env.h"
 
 using namespace std;
@@ -14,6 +15,7 @@ using boost::asio::buffer;
 using boost::asio::ip::tcp;
 using rockarbon::protocol::PROT_HEARBEAT_REQ;
 using rockarbon::protocol::PROT_HEARBEAT_RES;
+using rockarbon::protocol::PROT_PASSWD_OK;
 using rockarbon::protocol::PROT_SYNC_FIRST;
 using rockarbon::protocol::PROT_SYNC_MORE;
 using rockarbon::protocol::PROT_SYNC_DONE;
@@ -43,28 +45,49 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
     if (socket == nullptr) {
         return false;
     }
-
     Env &env = Env::getInstance();
     mImpl->logger.reset(env.getLogger("DataExcClient"));
+
+    mImpl->aes.reset(new AESGuard());
+    mImpl->aes->init(passwd);
+    mImpl->socket = socket;
+
+    // 发送 32*8 位随机秘钥
+    StringUtils utils;
+    string randomPassword = utils.getRandomString(32);
+    if (!sendData(randomPassword)) {
+        close();
+        return false;
+    };
+    // 用随机秘钥重新初始化加密器
+    mImpl->aes->init(randomPassword);
+    string reData;
+
+    if (!recData(reData)) {
+        close();
+        return false;
+    };
+
+    if (reData != PROT_PASSWD_OK) {
+        if (mImpl->logger != nullptr)mImpl->logger->error("Password Sync Error");
+        close();
+        return false;
+    }
+
     mImpl->storage = env.getStorage();
     if (mImpl->storage == nullptr) {
         if (mImpl->logger != nullptr)mImpl->logger->error("Storage Init Error");
         return false;
     }
 
-    mImpl->aes.reset(new AESGuard());
-    mImpl->aes->init(passwd);
 
-    mImpl->socket = socket;
     if (mImpl->logger != nullptr)mImpl->logger->debug("Client Init");
 
     mImpl->status = Status::SYNCING;
 
     // 同步操作开始
-    string reData;
-
-    // 发送第一次请求
-    if (!sendData(PROT_SYNC_FIRST, reData)) {
+    // 发送第一次同步请求
+    if (!sendAndRecData(PROT_SYNC_FIRST, reData)) {
         close();
         return false;
     };
@@ -73,7 +96,7 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
 
     // 循环同步客户端，直到结束
     while (reData == "more") {
-        if (!sendData(PROT_SYNC_MORE, reData)) {
+        if (!sendAndRecData(PROT_SYNC_MORE, reData)) {
             close();
             return false;
         }
@@ -87,13 +110,13 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
     }
 
     // 返回服务器多出的数据
-    if (!sendData(reData, reData)) {
+    if (!sendAndRecData(reData, reData)) {
         close();
         return false;
     }
 
     // 同步结束
-    if (!sendData(PROT_SYNC_DONE, reData)) {
+    if (!sendAndRecData(PROT_SYNC_DONE, reData)) {
         close();
         return false;
     }
@@ -109,36 +132,34 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
  *
  * */
 
-bool DataExcClient::sendData(std::string data, string &reData) {
+bool DataExcClient::sendAndRecData(std::string data, string &reData) {
     // 如果客户端状态不是 SYNCED 或者 SYNCING ，则打印 Log 并退出
     if (getStatus() != Status::SYNCED || getStatus() == Status::SYNCING) {
         if (mImpl->logger != nullptr)mImpl->logger->warning("Client's Can't Send");
         return false;
     }
 
-    mImpl->aes->decode(data);
+//    mImpl->aes->decode(data);
+//
+//    // 出现错误抛出异常
+//    try {
+//        boost::asio::write(
+//                *mImpl->socket,
+//                buffer(data, (data.size() + 1))
+//        );
+//        boost::asio::streambuf reDataBuf;
+//        boost::asio::read_until(*mImpl->socket, reDataBuf, "\0");
+//        reData.clear();
+//        std::istream(&reDataBuf) >> reData;
+//    } catch (exception &e) {
+//        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+//        close();
+//        return false;
+//    }
+//
+//    mImpl->aes->decode(reData);
 
-    // 出现错误抛出异常
-    try {
-        boost::asio::write(
-                *mImpl->socket,
-                buffer(data, (data.size() + 1))
-        );
-        boost::asio::streambuf reDataBuf;
-        boost::asio::read_until(*mImpl->socket, reDataBuf, "\0");
-        reData.clear();
-        std::istream(&reDataBuf) >> reData;
-    } catch (exception &e) {
-        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
-        close();
-        return false;
-    }
-
-    // TODO 解密操作
-    mImpl->aes->decode(reData);
-
-
-    return true;
+    return sendData(data) && recData(reData);
 }
 
 Status DataExcClient::getStatus() {
@@ -163,7 +184,7 @@ bool DataExcClient::check() {
     }
 
     string redata;
-    if (!sendData(PROT_HEARBEAT_REQ, redata)) {
+    if (!sendAndRecData(PROT_HEARBEAT_REQ, redata)) {
         close();
         return false;
     } else {
@@ -174,6 +195,44 @@ bool DataExcClient::check() {
             return true;
         }
     }
+}
+
+bool DataExcClient::recData(std::string &reData) {
+    // 出现错误抛出异常
+
+    try {
+        boost::asio::streambuf reDataBuf;
+        boost::asio::read_until(*mImpl->socket, reDataBuf, "\0");
+        reData.clear();
+        std::istream(&reDataBuf) >> reData;
+    } catch (exception &e) {
+        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+        close();
+        return false;
+    }
+
+    // 解密操作
+    mImpl->aes->decode(reData);
+    return true;
+}
+
+bool DataExcClient::sendData(std::string data) {
+
+    // 加密数据
+    mImpl->aes->decode(data);
+
+    // 出现错误抛出异常
+    try {
+        boost::asio::write(
+                *mImpl->socket,
+                buffer(data, (data.size() + 1))
+        );
+    } catch (exception &e) {
+        if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
+        return false;
+
+    }
+    return true;
 }
 
 

@@ -22,7 +22,11 @@ public:
     ClientBase &operator=(const ClientBase &other)= delete;
 
     // APIs
-    virtual bool sendData(std::string, std::string &)=0;
+    virtual bool sendData(std::string)=0;
+
+    virtual bool recData(std::string &)=0;
+
+    virtual bool sendAndRecData(std::string, std::string &)=0;
 
     virtual bool init(std::shared_ptr<boost::asio::ip::tcp::socket>, std::string passwd)=0;
 

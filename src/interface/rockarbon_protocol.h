@@ -11,6 +11,8 @@ namespace rockarbon {
         const std::string PROT_HEAD = "rockarbon/1.0\n";
         const std::string PROT_HEARBEAT_REQ = PROT_HEAD + "hearbeat request\n";
         const std::string PROT_HEARBEAT_RES = PROT_HEAD + "hearbeat response\n";
+
+        const std::string PROT_PASSWD_OK = PROT_HEAD + "password ok\n";
         const std::string PROT_SYNC_FIRST = PROT_HEAD + "sync first\n";
         const std::string PROT_SYNC_MORE = PROT_HEAD + "sync more\n";
         const std::string PROT_SYNC_DONE = PROT_HEAD + "sync done\n";

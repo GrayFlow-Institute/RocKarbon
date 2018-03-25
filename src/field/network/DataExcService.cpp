@@ -91,12 +91,9 @@ bool DataExcService::run() {
         while (mImpl->canRun) {
             shared_ptr<ip::tcp::socket> socket(new ip::tcp::socket(service));
             acceptor.accept(*socket);
-            // TODO 校验步骤
 
+            // 校验步骤在客户端实现
 
-
-
-            // TODO 校验完之后
             shared_ptr<DataExcClient> client(new DataExcClient());
             client->init(socket, mImpl->password);
             mImpl->clients.insert(mImpl->clients.end(), client);

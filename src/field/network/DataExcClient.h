@@ -19,7 +19,11 @@ public:
     // APIs
     bool init(std::shared_ptr<boost::asio::ip::tcp::socket> socket, std::string passwd) override;
 
-    bool sendData(std::string data, std::string &reData) override;
+    bool sendData(std::string data);
+
+    bool recData(std::string &reData);
+
+    bool sendAndRecData(std::string data, std::string &reData) override;
 
     bool close() override;
 
