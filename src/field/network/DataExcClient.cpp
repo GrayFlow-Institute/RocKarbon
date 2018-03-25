@@ -116,7 +116,7 @@ bool DataExcClient::sendData(std::string data, string &reData) {
         return false;
     }
 
-    // TODO 加密操作
+    mImpl->aes->decode(data);
 
     // 出现错误抛出异常
     try {
@@ -124,9 +124,10 @@ bool DataExcClient::sendData(std::string data, string &reData) {
                 *mImpl->socket,
                 buffer(data, (data.size() + 1))
         );
-        boost::asio::streambuf response;
-        boost::asio::read_until(*mImpl->socket, response, "\0");
-//        reData = response;
+        boost::asio::streambuf reDataBuf;
+        boost::asio::read_until(*mImpl->socket, reDataBuf, "\0");
+        reData.clear();
+        std::istream(&reDataBuf) >> reData;
     } catch (exception &e) {
         if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
         close();
@@ -134,6 +135,8 @@ bool DataExcClient::sendData(std::string data, string &reData) {
     }
 
     // TODO 解密操作
+    mImpl->aes->decode(reData);
+
 
     return true;
 }
