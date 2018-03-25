@@ -7,6 +7,7 @@ include_directories(
         /usr/include
         ../../interface
         ../../base/security
+        ../../base/storage
 )
 
 target_link_libraries(
@@ -20,4 +21,5 @@ target_link_libraries(
         pthread
         boost_system
         boost_filesystem
+        boost_regex
 )
