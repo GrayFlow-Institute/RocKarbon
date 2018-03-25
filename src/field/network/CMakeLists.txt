@@ -19,7 +19,9 @@ target_link_libraries(
 
         # Boost::ASIO
         pthread
+        boost_thread
         boost_system
         boost_filesystem
         boost_regex
+        boost_date_time
 )
