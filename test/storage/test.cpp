@@ -56,6 +56,24 @@ TEST(Storage, FileStorage) {
         EXPECT_EQ(storage->deal("4 d\n3 r\n"), "more");
         EXPECT_EQ(storage->deal("6 d\n5 r\n"), "more");
 
+        // 再次初始化，填写错误的参数
+        storage = env.getStorage();
+
+        EXPECT_EQ(storage->deal(" asdf"), "error");
+        EXPECT_EQ(storage->deal(""), "");
+        EXPECT_EQ(storage->deal("1"), "error");
+        EXPECT_EQ(storage->deal("1 "), "more");
+        EXPECT_EQ(storage->get(1), "");
+        EXPECT_EQ(storage->deal("1asdf"), "error");
+        EXPECT_EQ(storage->deal("asdf"), "error");
+        EXPECT_EQ(storage->deal(""), "1 \n");
+        EXPECT_EQ(storage->deal(" "), "error");
+        EXPECT_EQ(storage->deal("1\tadsf"), "");
+        EXPECT_EQ(storage->deal("1\t123"), "");
+        EXPECT_EQ(storage->deal("1\t 123"), "");
+        EXPECT_EQ(storage->deal("1  123"), "");
+        EXPECT_EQ(storage->deal("1 \t 123"), "");
+
         env.clear();
     }
 
@@ -88,9 +106,9 @@ TEST(Storage, FileStorage) {
 
     EXPECT_EQ(storage->sync(), true);
 
-    storage = env.getStorage(); // 重新初始化，检查 sync 是否真的写入磁盘
+    // 重新初始化，检查 sync 是否真的写入磁盘
+    storage = env.getStorage();
 
     EXPECT_EQ(storage->get(7), "e");
     EXPECT_EQ(storage->get(6), "d");
-
 }

@@ -42,7 +42,7 @@ bool FileStorage::init(string path) {
     mImpl->path.clear();
 
     fstream f;
-    f.open(path, ios::in|ios::out);
+    f.open(path, ios::in | ios::out);
     if (!f) {
         return false;
     }
@@ -72,7 +72,7 @@ string FileStorage::get(long long key) {
  *
  * 按照行添加，从大到小，数据格式例如：
  * 3 stringData
- * 2 stringData
+ * 2\tstringData
  * 1 stringData
  *
  * 如果出现错误，则返回 "error"
@@ -101,12 +101,13 @@ string FileStorage::deal(string data) {
             char c = data.c_str()[i++];
             if (strchr("1234567890", c) != nullptr) {
                 buff += c;
-            } else if (strchr(" ", c) != nullptr) {
+            } else if (strchr(" \t", c) != nullptr) {
+                if (buff.empty()) return "error";
                 keys.push_back(stoll(buff));
                 buff.clear();
                 while (true) {
                     c = data.c_str()[i++];
-                    if (c != '\n' && c != '\0') {
+                    if (c != '\n' && c != '\r' && c != '\0') {
                         buff += c;
                     } else {
                         break;
@@ -117,8 +118,7 @@ string FileStorage::deal(string data) {
             }
             if (c == '\0') { break; }
         }
-
-        if (keys.size() != values.size()) {
+        if (keys.size() == 0 || keys.size() != values.size()) {
             return "error";
         }
     } catch (exception &e) {
@@ -155,10 +155,11 @@ string FileStorage::deal(string data) {
 
     }
     // 一直插入成功，即数据不够，所以请求新的数据——客户端完美领先
-    if (buff.empty()) {
+    if (buff.empty() && dealStatu && preDealStatu) {
         return "more";
     }
 
+    // 返回多出的数据，或者全部 "" 即双方同步
     return buff;
 }
 

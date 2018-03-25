@@ -8,9 +8,6 @@
 #include "../../interface/rockarbon_protocol.h"
 #include "../../base/security/AESGuard.h"
 #include "../system/Env.h"
-#include <arpa/inet.h>
-#include <boost/asio.hpp>
-#include <utility>
 
 using namespace std;
 using boost::asio::buffer;
@@ -63,8 +60,7 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
 
     mImpl->status = Status::SYNCING;
 
-    // TODO 同步
-
+    // 同步操作开始
     string reData;
 
     // 发送第一次请求
@@ -72,14 +68,17 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
         close();
         return false;
     };
-    do {
-        // 循环同步客户端，直到结束
-        reData = mImpl->storage->deal(reData);
+
+    reData = mImpl->storage->deal(reData);
+
+    // 循环同步客户端，直到结束
+    while (reData == "more") {
         if (!sendData(PROT_SYNC_MORE, reData)) {
             close();
             return false;
         }
-    } while (reData == "more");
+        reData = mImpl->storage->deal(reData);
+    }
 
     // 出现错误，直接关闭，并等待回收
     if (reData == "error") {
@@ -92,15 +91,23 @@ bool DataExcClient::init(shared_ptr<tcp::socket> socket, string passwd) {
         close();
         return false;
     }
+
+    // 同步结束
     if (!sendData(PROT_SYNC_DONE, reData)) {
         close();
         return false;
     }
-
-    // 同步结束
     mImpl->status = Status::SYNCED;
     return true;
 }
+
+/* *
+ * 发送数据，并接受返回
+ *
+ * 发送格式：xxxxx\0
+ * 接收格式：xxxxx\0
+ *
+ * */
 
 bool DataExcClient::sendData(std::string data, string &reData) {
     // 如果客户端状态不是 SYNCED 或者 SYNCING ，则打印 Log 并退出
@@ -108,36 +115,26 @@ bool DataExcClient::sendData(std::string data, string &reData) {
         if (mImpl->logger != nullptr)mImpl->logger->warning("Client's Can't Send");
         return false;
     }
-    if (data.size() > (BUFF_SIZE - sizeof(uint32_t))) {
-        if (mImpl->logger != nullptr)mImpl->logger->warning("Data Too Long");
-        return false;
-    }
 
-    char buff[BUFF_SIZE] = {0};
-    uint32_t size = static_cast<int>(data.size());
-    memcpy(buff, (char *) htonl(size), sizeof(size));
-    strcpy(buff + sizeof(size), data.c_str());
+    // TODO 加密操作
 
+    // 出现错误抛出异常
     try {
-        boost::system::error_code ignored_error;
         boost::asio::write(
                 *mImpl->socket,
-                buffer(data),
-                boost::asio::transfer_all(),
-                ignored_error
+                buffer(data, (data.size() + 1))
         );
-        boost::asio::read(
-                *mImpl->socket,
-                buffer(reData),
-                boost::asio::transfer_all(),
-                ignored_error
-        );
-
+        boost::asio::streambuf response;
+        boost::asio::read_until(*mImpl->socket, response, "\0");
+//        reData = response;
     } catch (exception &e) {
         if (mImpl->logger != nullptr)mImpl->logger->debug(e.what());
         close();
         return false;
     }
+
+    // TODO 解密操作
+
     return true;
 }
 
